@@ -8,6 +8,7 @@ public class WechatshopApplication {
 
 	public static void main(String[] args) {
 		SpringApplication.run(WechatshopApplication.class, args);
+		System.out.println("ok");
 	}
 
 }
