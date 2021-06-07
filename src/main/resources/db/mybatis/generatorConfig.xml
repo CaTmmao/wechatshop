@@ -14,7 +14,7 @@
             <property name="nullCatalogMeansCurrent" value="true"/>
         </jdbcConnection>
 
-        <javaModelGenerator targetPackage="com.catmmao.wechatshop.model" targetProject="src/main/java">
+        <javaModelGenerator targetPackage="com.catmmao.wechatshop.model.generated" targetProject="src/main/java">
         </javaModelGenerator>
 
         <!--指定生成mapper.xml的路径-->

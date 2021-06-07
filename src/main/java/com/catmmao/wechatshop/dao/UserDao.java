@@ -3,8 +3,8 @@ package com.catmmao.wechatshop.dao;
 import java.util.List;
 
 import com.catmmao.wechatshop.dao.mapper.UserMapper;
-import com.catmmao.wechatshop.model.User;
-import com.catmmao.wechatshop.model.UserExample;
+import com.catmmao.wechatshop.model.generated.User;
+import com.catmmao.wechatshop.model.generated.UserExample;
 import org.apache.ibatis.session.SqlSession;
 import org.apache.ibatis.session.SqlSessionFactory;
 import org.springframework.stereotype.Repository;

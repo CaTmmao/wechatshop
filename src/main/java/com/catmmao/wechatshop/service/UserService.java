@@ -1,7 +1,7 @@
 package com.catmmao.wechatshop.service;
 
 import com.catmmao.wechatshop.dao.UserDao;
-import com.catmmao.wechatshop.model.User;
+import com.catmmao.wechatshop.model.generated.User;
 import org.apache.ibatis.exceptions.PersistenceException;
 import org.springframework.stereotype.Service;
 
