@@ -1,7 +1,10 @@
 package com.catmmao.wechatshop.controller;
 
+import javax.servlet.http.HttpServletResponse;
+
 import com.catmmao.wechatshop.model.TelAndCode;
 import com.catmmao.wechatshop.service.AuthService;
+import com.catmmao.wechatshop.service.TelVerificationService;
 import org.apache.shiro.SecurityUtils;
 import org.apache.shiro.authc.UsernamePasswordToken;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -12,9 +15,12 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 @RequestMapping("/api")
 public class AuthController {
+    private final TelVerificationService telVerificationService;
     private final AuthService authService;
 
-    public AuthController(AuthService authService) {
+    public AuthController(TelVerificationService telVerificationService,
+                          AuthService authService) {
+        this.telVerificationService = telVerificationService;
         this.authService = authService;
     }
 
@@ -23,8 +29,13 @@ public class AuthController {
      * @param telAndCode 手机号
      */
     @PostMapping("/code")
-    public void sendVerificationCodeToUserPhone(@RequestBody TelAndCode telAndCode) {
-        authService.sendVerificationCodeToUserPhone(telAndCode.getTel());
+    public void sendVerificationCodeToUserPhone(@RequestBody TelAndCode telAndCode,
+                                                HttpServletResponse response) {
+        if (telVerificationService.verifyTel(telAndCode)) {
+            authService.sendVerificationCodeToUserPhone(telAndCode.getTel());
+        } else {
+            response.setStatus(response.SC_BAD_REQUEST);
+        }
     }
 
     /**
