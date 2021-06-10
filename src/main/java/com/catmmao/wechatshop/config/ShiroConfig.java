@@ -4,18 +4,30 @@ import java.util.HashMap;
 import java.util.Map;
 
 import com.catmmao.wechatshop.service.ShiroRealm;
+import com.catmmao.wechatshop.service.UserLoginInterceptor;
+import com.catmmao.wechatshop.service.UserService;
 import org.apache.shiro.mgt.SecurityManager;
 import org.apache.shiro.spring.web.ShiroFilterFactoryBean;
 import org.apache.shiro.web.mgt.DefaultWebSecurityManager;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.web.servlet.config.annotation.InterceptorRegistry;
+import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
 @Configuration
-public class ShiroConfig {
+public class ShiroConfig implements WebMvcConfigurer {
     private final ShiroRealm shiroRealm;
+    private final UserService userService;
 
-    public ShiroConfig(ShiroRealm shiroRealm) {
+    public ShiroConfig(ShiroRealm shiroRealm, UserService userService) {
         this.shiroRealm = shiroRealm;
+        this.userService = userService;
+    }
+
+    // 请求拦截器
+    @Override
+    public void addInterceptors(InterceptorRegistry registry) {
+        registry.addInterceptor(new UserLoginInterceptor(userService));
     }
 
     @Bean

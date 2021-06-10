@@ -1,5 +1,7 @@
 package com.catmmao.wechatshop.service;
 
+import java.util.Optional;
+
 import com.catmmao.wechatshop.dao.UserDao;
 import com.catmmao.wechatshop.model.generated.User;
 import org.apache.ibatis.exceptions.PersistenceException;
@@ -25,5 +27,9 @@ public class UserService {
         }
 
         return user;
+    }
+
+    public Optional<User> getUserByTel(String tel) {
+        return Optional.ofNullable(userDao.getUserByTel(tel));
     }
 }
