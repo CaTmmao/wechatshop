@@ -9,6 +9,7 @@ import com.catmmao.wechatshop.service.UserService;
 import org.apache.shiro.mgt.SecurityManager;
 import org.apache.shiro.spring.web.ShiroFilterFactoryBean;
 import org.apache.shiro.web.mgt.DefaultWebSecurityManager;
+import org.apache.shiro.web.session.mgt.DefaultWebSessionManager;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.web.servlet.config.annotation.InterceptorRegistry;
@@ -35,6 +36,7 @@ public class ShiroConfig implements WebMvcConfigurer {
         DefaultWebSecurityManager securityManager = new DefaultWebSecurityManager();
 
         securityManager.setRealm(shiroRealm);
+        securityManager.setSessionManager(new DefaultWebSessionManager());
 
         return securityManager;
     }
@@ -59,5 +61,4 @@ public class ShiroConfig implements WebMvcConfigurer {
         shiroFilterFactoryBean.setFilterChainDefinitionMap(pattern);
         return shiroFilterFactoryBean;
     }
-
 }
