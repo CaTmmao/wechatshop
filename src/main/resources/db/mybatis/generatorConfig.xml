@@ -27,7 +27,12 @@
         </javaClientGenerator>
 
         <table schema="wechatshop" tableName="user" domainObjectName="User">
-            <generatedKey column="id" sqlStatement="MySql" identity="true"/>
+        </table>
+        <table schema="wechatshop" tableName="goods" domainObjectName="Goods">
+        </table>
+        <table schema="wechatshop" tableName="shop" domainObjectName="Shop">
+        </table>
+        <table schema="wechatshop" tableName="shopping_cart" domainObjectName="ShoppingCart">
         </table>
     </context>
 </generatorConfiguration>
