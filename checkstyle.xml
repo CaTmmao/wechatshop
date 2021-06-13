@@ -23,7 +23,7 @@
     <!--不检查 model/generated 目录内的文件-->
     <!-- See https://checkstyle.org/config_filefilters.html -->
     <module name="BeforeExecutionExclusionFileFilter">
-        <property name="fileNamePattern" value=".*(generated[\\/]|mybatis[\\/]mapper[\\/]).*$"/>
+        <property name="fileNamePattern" value=".*(generated[\\/]|dao[\\/]mapper[\\/]|mybatis[\\/]mapper[\\/]).*$"/>
     </module>
 
     <!-- https://checkstyle.org/config_filters.html#SuppressionFilter -->
