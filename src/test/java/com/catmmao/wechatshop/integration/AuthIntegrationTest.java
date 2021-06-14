@@ -64,6 +64,12 @@ public class AuthIntegrationTest {
         Assertions.assertEquals(HttpStatus.BAD_REQUEST, response.getStatusCode());
     }
 
+    @Test
+    public void testNeedAuthenticatedControllerWithUnLoginStatusReturn401() {
+        ResponseEntity<String> response = restTemplate.postForEntity(getUrl("/api/any"), null, String.class);
+        Assertions.assertEquals(HttpStatus.UNAUTHORIZED, response.getStatusCode());
+    }
+
     /**
      * 登录及登出集成测试
      * 对 controller 进行测试时记得手动带上 cookie,因为它不会和浏览器一样自己带上 cookie
