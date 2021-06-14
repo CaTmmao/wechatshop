@@ -3,7 +3,6 @@ package com.catmmao.wechatshop.config;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.Map;
-
 import javax.servlet.Filter;
 
 import com.catmmao.wechatshop.service.ShiroRealm;
@@ -58,8 +57,8 @@ public class ShiroConfig implements WebMvcConfigurer {
         */
         Map<String, String> pattern = new HashMap<>();
 
-        pattern.put("/api/code", "anon");
-        pattern.put("/api/session", "anon");
+        pattern.put("/api/v1/code", "anon");
+        pattern.put("/api/v1/session", "anon");
         pattern.put("/**", "authc");
 
         shiroFilterFactoryBean.setFilterChainDefinitionMap(pattern);

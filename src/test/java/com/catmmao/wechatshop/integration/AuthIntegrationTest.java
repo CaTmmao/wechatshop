@@ -43,12 +43,12 @@ public class AuthIntegrationTest {
 
     @BeforeEach
     void setup() {
-        sendCodeApiUrl = getUrl("/api/code");
-        sessionApiUrl = getUrl("/api/session");
+        sendCodeApiUrl = getUrl("/code");
+        sessionApiUrl = getUrl("/session");
     }
 
     private String getUrl(String api) {
-        return "http://localhost:" + port + api;
+        return "http://localhost:" + port + "/api/v1" + api;
     }
 
     @Test
@@ -66,7 +66,7 @@ public class AuthIntegrationTest {
 
     @Test
     public void testNeedAuthenticatedControllerWithUnLoginStatusReturn401() {
-        ResponseEntity<String> response = restTemplate.postForEntity(getUrl("/api/any"), null, String.class);
+        ResponseEntity<String> response = restTemplate.postForEntity(getUrl("/any"), null, String.class);
         Assertions.assertEquals(HttpStatus.UNAUTHORIZED, response.getStatusCode());
     }
 
