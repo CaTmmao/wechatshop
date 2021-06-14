@@ -1,7 +1,10 @@
 package com.catmmao.wechatshop.config;
 
 import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.Map;
+
+import javax.servlet.Filter;
 
 import com.catmmao.wechatshop.service.ShiroRealm;
 import com.catmmao.wechatshop.service.UserLoginInterceptor;
@@ -57,8 +60,14 @@ public class ShiroConfig implements WebMvcConfigurer {
 
         pattern.put("/api/code", "anon");
         pattern.put("/api/session", "anon");
+        pattern.put("/**", "authc");
 
         shiroFilterFactoryBean.setFilterChainDefinitionMap(pattern);
+
+        LinkedHashMap<String, Filter> filterMap = new LinkedHashMap<>();
+        filterMap.put("authc", new ShiroLoginFilter());
+        shiroFilterFactoryBean.setFilters(filterMap);
+
         return shiroFilterFactoryBean;
     }
 }
