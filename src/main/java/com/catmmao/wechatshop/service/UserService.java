@@ -1,5 +1,6 @@
 package com.catmmao.wechatshop.service;
 
+import java.util.Date;
 import java.util.Optional;
 
 import com.catmmao.wechatshop.dao.UserDao;
@@ -18,11 +19,13 @@ public class UserService {
     public User createUserIfNotExist(String tel) {
         User user = new User();
         user.setTel(tel);
+        user.setCreatedAt(new Date());
 
         // 没有判断用户是否存在在数据库的步骤，因为是多线程运行，可能会有问题，所以这里直接将用户数据插入到数据库
         try {
             userDao.insertUser(user);
         } catch (PersistenceException e) {
+            e.printStackTrace();
             return userDao.getUserByTel(tel);
         }
 
