@@ -6,6 +6,8 @@
 
 <generatorConfiguration>
     <context id="wechatshop" targetRuntime="MyBatis3">
+        <plugin type="com.qiukeke.mybatis.plugins.MySQLLimitPlugin"/>
+        <!--可使 mapper.java 文件直接被注入的插件-->
         <plugin type="org.mybatis.generator.plugins.MapperAnnotationPlugin"/>
 
         <!--        配置数据库连接-->
