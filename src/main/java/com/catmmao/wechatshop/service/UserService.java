@@ -24,9 +24,10 @@ public class UserService {
         // 没有判断用户是否存在在数据库的步骤，因为是多线程运行，可能会有问题，所以这里直接将用户数据插入到数据库
         try {
             userDao.insertUser(user);
-        } catch (PersistenceException e) {
-            e.printStackTrace();
+        } catch (DuplicateKeyException e) {
             return userDao.getUserByTel(tel);
+        } catch (Exception e) {
+            e.printStackTrace();
         }
 
         return user;
