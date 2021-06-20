@@ -53,6 +53,7 @@
 
 
     <module name="TreeWalker">
+        <module name="IllegalImport"/>
         <module name="OuterTypeFilename"/>
         <module name="IllegalTokenText">
             <property name="tokens" value="STRING_LITERAL, CHAR_LITERAL"/>
@@ -281,10 +282,6 @@
         </module>
         <module name="JavadocMethod">
             <property name="scope" value="public"/>
-            <property name="allowMissingParamTags" value="true"/>
-            <property name="allowMissingReturnTag" value="true"/>
-            <property name="allowedAnnotations" value="Override, Test"/>
-            <property name="tokens" value="METHOD_DEF, CTOR_DEF, ANNOTATION_FIELD_DEF"/>
         </module>
         <!--        <module name="MissingJavadocMethod">-->
         <!--            <property name="scope" value="public"/>-->
@@ -314,7 +311,6 @@
         <module name="EqualsHashCode"/>
         <module name="IllegalInstantiation"/>
         <module name="InnerAssignment"/>
-        <module name="MagicNumber"/>
         <module name="MissingSwitchDefault"/>
         <module name="SimplifyBooleanExpression"/>
         <module name="SimplifyBooleanReturn"/>
@@ -334,6 +330,7 @@
         <!-- https://checkstyle.sourceforge.io/config_imports.html -->
         <module name="AvoidStarImport"/>
         <module name="RedundantImport"/>
+        <module name="RedundantModifier"/>
         <module name="UnusedImports"/>
         <!--        <module name="CustomImportOrder">-->
         <!--            <property name="specialImportsRegExp" value="(com.hardcore)"/>-->
