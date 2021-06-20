@@ -8,7 +8,7 @@ import javax.websocket.server.PathParam;
 import com.catmmao.wechatshop.exception.ForbiddenForShopException;
 import com.catmmao.wechatshop.exception.ResourceNotFoundException;
 import com.catmmao.wechatshop.model.generated.Goods;
-import com.catmmao.wechatshop.model.response.GoodsResponseModel;
+import com.catmmao.wechatshop.model.response.CommonResponseModel;
 import com.catmmao.wechatshop.model.response.PaginationResponseModel;
 import com.catmmao.wechatshop.service.GoodsService;
 import org.springframework.http.HttpStatus;
@@ -39,14 +39,14 @@ public class GoodsController {
      * @return 创建好的商品信息
      */
     @PostMapping("/goods")
-    public ResponseEntity<GoodsResponseModel> createGoods(@RequestBody Goods goods) {
+    public ResponseEntity<CommonResponseModel<Goods>> createGoods(@RequestBody Goods goods) {
         sanitize(goods);
         try {
             goods = goodsService.createGoods(goods);
-            GoodsResponseModel responseBody = GoodsResponseModel.of(goods);
+            CommonResponseModel<Goods> responseBody = CommonResponseModel.of(goods);
             return new ResponseEntity<>(responseBody, HttpStatus.CREATED);
         } catch (ForbiddenForShopException e) {
-            GoodsResponseModel responseBody = GoodsResponseModel.error(e.getMessage());
+            CommonResponseModel<Goods> responseBody = CommonResponseModel.error(e.getMessage());
             return new ResponseEntity<>(responseBody, HttpStatus.FORBIDDEN);
         }
     }
@@ -58,18 +58,18 @@ public class GoodsController {
      * @return 被删除的商品信息
      */
     @DeleteMapping("/goods/{id}")
-    public ResponseEntity<GoodsResponseModel> deleteGoods(@PathVariable("id") Long goodsId) {
-        GoodsResponseModel responseBody;
+    public ResponseEntity<CommonResponseModel<Goods>> deleteGoods(@PathVariable("id") Long goodsId) {
+        CommonResponseModel<Goods> responseBody;
 
         try {
             Goods goods = goodsService.deleteGoodsByGoodsId(goodsId);
-            responseBody = GoodsResponseModel.of(goods);
+            responseBody = CommonResponseModel.of(goods);
             return new ResponseEntity<>(responseBody, HttpStatus.NO_CONTENT);
         } catch (ForbiddenForShopException e) {
-            responseBody = GoodsResponseModel.error(e.getMessage());
+            responseBody = CommonResponseModel.error(e.getMessage());
             return new ResponseEntity<>(responseBody, HttpStatus.FORBIDDEN);
         } catch (ResourceNotFoundException e) {
-            responseBody = GoodsResponseModel.error(e.getMessage());
+            responseBody = CommonResponseModel.error(e.getMessage());
             return new ResponseEntity<>(responseBody, HttpStatus.NOT_FOUND);
         }
     }
@@ -99,21 +99,21 @@ public class GoodsController {
      * @return 更新后的商品信息
      */
     @PatchMapping("/goods")
-    public ResponseEntity<GoodsResponseModel> updateGoods(@PathParam("id") Long goodsId,
-                                                          @RequestBody Goods goods) {
+    public ResponseEntity<CommonResponseModel<Goods>> updateGoods(@PathParam("id") Long goodsId,
+                                                           @RequestBody Goods goods) {
         sanitize(goods);
         goods.setId(goodsId);
-        GoodsResponseModel responseBody;
+        CommonResponseModel<Goods> responseBody;
 
         try {
             Goods result = goodsService.updateGoods(goods);
-            responseBody = GoodsResponseModel.of(result);
+            responseBody = CommonResponseModel.of(result);
             return ResponseEntity.of(Optional.of(responseBody));
         } catch (ResourceNotFoundException e) {
-            responseBody = GoodsResponseModel.error(e.getMessage());
+            responseBody = CommonResponseModel.error(e.getMessage());
             return new ResponseEntity<>(responseBody, HttpStatus.NOT_FOUND);
         } catch (ForbiddenForShopException e) {
-            responseBody = GoodsResponseModel.error(e.getMessage());
+            responseBody = CommonResponseModel.error(e.getMessage());
             return new ResponseEntity<>(responseBody, HttpStatus.FORBIDDEN);
         }
     }
