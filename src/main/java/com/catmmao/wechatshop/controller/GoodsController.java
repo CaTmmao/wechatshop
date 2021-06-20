@@ -2,6 +2,8 @@ package com.catmmao.wechatshop.controller;
 
 import java.util.Date;
 import java.util.List;
+import java.util.Optional;
+import javax.websocket.server.PathParam;
 
 import com.catmmao.wechatshop.exception.ForbiddenForShopException;
 import com.catmmao.wechatshop.exception.ResourceNotFoundException;
@@ -13,6 +15,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -86,6 +89,33 @@ public class GoodsController {
                                                                                          Integer shopId) {
         PaginationResponseModel<List<Goods>> responseBody = goodsService.getGoodsByShopId(pageNum, pageSize, shopId);
         return new ResponseEntity<>(responseBody, HttpStatus.OK);
+    }
+
+    /**
+     * 更新商品
+     *
+     * @param goodsId 商品ID
+     * @param goods   商品信息
+     * @return 更新后的商品信息
+     */
+    @PatchMapping("/goods")
+    public ResponseEntity<GoodsResponseModel> updateGoods(@PathParam("id") Long goodsId,
+                                                          @RequestBody Goods goods) {
+        sanitize(goods);
+        goods.setId(goodsId);
+        GoodsResponseModel responseBody;
+
+        try {
+            Goods result = goodsService.updateGoods(goods);
+            responseBody = GoodsResponseModel.of(result);
+            return ResponseEntity.of(Optional.of(responseBody));
+        } catch (ResourceNotFoundException e) {
+            responseBody = GoodsResponseModel.error(e.getMessage());
+            return new ResponseEntity<>(responseBody, HttpStatus.NOT_FOUND);
+        } catch (ForbiddenForShopException e) {
+            responseBody = GoodsResponseModel.error(e.getMessage());
+            return new ResponseEntity<>(responseBody, HttpStatus.FORBIDDEN);
+        }
     }
 
     /**

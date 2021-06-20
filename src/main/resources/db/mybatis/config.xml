@@ -6,5 +6,6 @@
     <mappers>
         <mapper resource="db/mybatis/mapper/UserMapper.xml"/>
         <mapper resource="db/mybatis/mapper/GoodsMapper.xml"/>
+        <mapper resource="db/mybatis/mapper/ShopMapper.xml"/>
     </mappers>
 </configuration>

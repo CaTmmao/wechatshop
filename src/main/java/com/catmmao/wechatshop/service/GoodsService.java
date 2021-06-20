@@ -1,5 +1,6 @@
 package com.catmmao.wechatshop.service;
 
+import java.util.Date;
 import java.util.List;
 
 import com.catmmao.wechatshop.UserContext;
@@ -109,5 +110,23 @@ public class GoodsService {
         }
 
         return (int) goodsMapper.countByExample(goodsExample);
+    }
+
+    public Goods updateGoods(Goods goods) {
+        Goods goodsInDb = goodsMapper.selectByPrimaryKey(goods.getId());
+        if (goodsInDb == null) {
+            throw new ResourceNotFoundException("找不到该商品");
+        }
+
+        Shop shop = shopMapper.selectByPrimaryKey(goods.getShopId());
+        Long userId = UserContext.getCurrentUser().getId();
+        if (!userId.equals(shop.getOwnerUserId())) {
+            throw new ForbiddenForShopException("店铺不属于该用户");
+        }
+
+        goods.setCreatedAt(goodsInDb.getCreatedAt());
+        goods.setUpdatedAt(new Date());
+        goodsMapper.updateByPrimaryKey(goods);
+        return goods;
     }
 }
