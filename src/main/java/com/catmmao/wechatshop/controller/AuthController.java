@@ -35,6 +35,7 @@ public class AuthController {
      * 发送手机验证码
      *
      * @param telAndCode 手机号
+     * @param response   响应
      */
     @PostMapping("/code")
     public void sendVerificationCodeToUserPhone(@RequestBody TelAndCode telAndCode,
