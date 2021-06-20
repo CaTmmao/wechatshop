@@ -41,6 +41,7 @@ public class GoodsController {
     @PostMapping
     public ResponseEntity<CommonResponseModel<Goods>> createGoods(@RequestBody Goods goods) {
         sanitize(goods);
+        goods.setCreatedAt(new Date());
         CommonResponseModel<Goods> responseBody;
 
         try {
@@ -127,7 +128,7 @@ public class GoodsController {
      */
     public void sanitize(Goods goods) {
         goods.setId(null);
-        goods.setCreatedAt(new Date());
+        goods.setCreatedAt(null);
         goods.setUpdatedAt(null);
     }
 }
