@@ -29,6 +29,12 @@ public class GoodsController {
         this.goodsService = goodsService;
     }
 
+    /**
+     * 创建商品
+     *
+     * @param goods 商品信息
+     * @return 创建好的商品信息
+     */
     @PostMapping("/goods")
     public ResponseEntity<GoodsResponseModel> createGoods(@RequestBody Goods goods) {
         sanitize(goods);
@@ -42,6 +48,12 @@ public class GoodsController {
         }
     }
 
+    /**
+     * 删除商品
+     *
+     * @param goodsId 商品ID
+     * @return 被删除的商品信息
+     */
     @DeleteMapping("/goods/{id}")
     public ResponseEntity<GoodsResponseModel> deleteGoods(@PathVariable("id") Long goodsId) {
         GoodsResponseModel responseBody;
@@ -59,6 +71,14 @@ public class GoodsController {
         }
     }
 
+    /**
+     * 获取所有商品
+     *
+     * @param pageNum  当前页数，从1开始
+     * @param pageSize 每页显示的数量
+     * @param shopId   店铺ID，若传递，则只显示该店铺中的商品
+     * @return 查询到的商品列表信息
+     */
     @GetMapping("/goods")
     public ResponseEntity<PaginationResponseModel<List<Goods>>> getGoodsListByShopId(@RequestParam Integer pageNum,
                                                                                      @RequestParam Integer pageSize,
