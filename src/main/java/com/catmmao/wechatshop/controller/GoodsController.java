@@ -44,7 +44,7 @@ public class GoodsController {
             return new ResponseEntity<>(responseBody, HttpStatus.CREATED);
         } catch (ForbiddenForShopException e) {
             GoodsResponseModel responseBody = GoodsResponseModel.error(e.getMessage());
-            return new ResponseEntity<>(responseBody, HttpStatus.UNAUTHORIZED);
+            return new ResponseEntity<>(responseBody, HttpStatus.FORBIDDEN);
         }
     }
 
