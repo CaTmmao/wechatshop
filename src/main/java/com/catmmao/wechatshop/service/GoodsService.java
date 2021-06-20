@@ -71,7 +71,7 @@ public class GoodsService {
      * @param shopId   店铺ID，若传递，则只显示该店铺中的商品
      * @return 所有商品
      */
-    public PaginationResponseModel<List<Goods>> getGoodsByShopId(
+    public PaginationResponseModel<Goods> getGoodsByShopId(
         Integer pageNum, Integer pageSize, Integer shopId) {
         // 商品总数量
         int totalNumber = countGoods(shopId);

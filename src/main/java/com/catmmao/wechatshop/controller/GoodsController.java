@@ -1,7 +1,6 @@
 package com.catmmao.wechatshop.controller;
 
 import java.util.Date;
-import java.util.List;
 import java.util.Optional;
 import javax.websocket.server.PathParam;
 
@@ -86,11 +85,11 @@ public class GoodsController {
      * @return 查询到的商品列表信息
      */
     @GetMapping
-    public ResponseEntity<PaginationResponseModel<List<Goods>>> getGoodsListByShopId(@RequestParam Integer pageNum,
+    public ResponseEntity<PaginationResponseModel<Goods>> getGoodsListByShopId(@RequestParam Integer pageNum,
                                                                                      @RequestParam Integer pageSize,
                                                                                      @RequestParam(required = false)
                                                                                          Integer shopId) {
-        PaginationResponseModel<List<Goods>> responseBody = goodsService.getGoodsByShopId(pageNum, pageSize, shopId);
+        PaginationResponseModel<Goods> responseBody = goodsService.getGoodsByShopId(pageNum, pageSize, shopId);
         return new ResponseEntity<>(responseBody, HttpStatus.OK);
     }
 
