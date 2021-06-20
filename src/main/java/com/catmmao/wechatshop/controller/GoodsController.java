@@ -41,12 +41,14 @@ public class GoodsController {
     @PostMapping("/goods")
     public ResponseEntity<CommonResponseModel<Goods>> createGoods(@RequestBody Goods goods) {
         sanitize(goods);
+        CommonResponseModel<Goods> responseBody;
+
         try {
             goods = goodsService.createGoods(goods);
-            CommonResponseModel<Goods> responseBody = CommonResponseModel.of(goods);
+            responseBody = CommonResponseModel.of(goods);
             return new ResponseEntity<>(responseBody, HttpStatus.CREATED);
         } catch (ForbiddenForShopException e) {
-            CommonResponseModel<Goods> responseBody = CommonResponseModel.error(e.getMessage());
+            responseBody = CommonResponseModel.error(e.getMessage());
             return new ResponseEntity<>(responseBody, HttpStatus.FORBIDDEN);
         }
     }
