@@ -35,12 +35,12 @@ public class GoodsService {
         Shop shop = shopMapper.selectByPrimaryKey(goods.getShopId());
 
         Long userId = UserContext.getCurrentUser().getId();
-        if (userId.equals(shop.getOwnerUserId())) {
+        if (shop == null || !userId.equals(shop.getOwnerUserId())) {
+            throw new ForbiddenForShopException("店铺不属于该用户");
+        } else {
             long id = goodsMapper.insert(goods);
             goods.setId(id);
             return goods;
-        } else {
-            throw new ForbiddenForShopException("店铺不属于该用户");
         }
     }
 
