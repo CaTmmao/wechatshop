@@ -106,6 +106,7 @@ public class GoodsController {
                                                            @RequestBody Goods goods) {
         sanitize(goods);
         goods.setId(goodsId);
+        goods.setUpdatedAt(new Date());
         CommonResponseModel<Goods> responseBody;
 
         try {
