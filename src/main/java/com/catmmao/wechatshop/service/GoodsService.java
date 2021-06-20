@@ -57,11 +57,7 @@ public class GoodsService {
             throw new ResourceNotFoundException("商品未找到！");
         }
 
-        Shop shop = shopMapper.selectByPrimaryKey(goods.getShopId());
-        Long userId = UserContext.getCurrentUser().getId();
-        if (!userId.equals(shop.getOwnerUserId())) {
-            throw new ForbiddenForShopException("店铺不属于该用户");
-        }
+        checkUserIfShopOwner(goods.getShopId());
 
         goods.setStatus(DbDataStatus.DELETE.getName());
         goodsMapper.updateByPrimaryKey(goods);
@@ -118,15 +114,24 @@ public class GoodsService {
             throw new ResourceNotFoundException("找不到该商品");
         }
 
-        Shop shop = shopMapper.selectByPrimaryKey(goods.getShopId());
-        Long userId = UserContext.getCurrentUser().getId();
-        if (!userId.equals(shop.getOwnerUserId())) {
-            throw new ForbiddenForShopException("店铺不属于该用户");
-        }
+        checkUserIfShopOwner(goods.getShopId());
 
         goods.setCreatedAt(goodsInDb.getCreatedAt());
         goods.setUpdatedAt(new Date());
         goodsMapper.updateByPrimaryKey(goods);
         return goods;
+    }
+
+    /**
+     * 检查用户是否是店铺的拥有者
+     *
+     * @param shopId 店铺ID
+     */
+    public void checkUserIfShopOwner(Long shopId) {
+        Shop shop = shopMapper.selectByPrimaryKey(shopId);
+        Long userId = UserContext.getCurrentUser().getId();
+        if (!userId.equals(shop.getOwnerUserId())) {
+            throw new ForbiddenForShopException("店铺不属于该用户");
+        }
     }
 }
