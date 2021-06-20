@@ -34,10 +34,10 @@ public class GoodsController {
         sanitize(goods);
         try {
             goods = goodsService.createGoods(goods);
-            GoodsResponseModel responseBody = GoodsResponseModel.createdSuccess(goods);
+            GoodsResponseModel responseBody = GoodsResponseModel.of(goods);
             return new ResponseEntity<>(responseBody, HttpStatus.CREATED);
         } catch (ForbiddenForShopException e) {
-            GoodsResponseModel responseBody = GoodsResponseModel.forbiddenForShop(e.getMessage());
+            GoodsResponseModel responseBody = GoodsResponseModel.error(e.getMessage());
             return new ResponseEntity<>(responseBody, HttpStatus.UNAUTHORIZED);
         }
     }
@@ -48,13 +48,13 @@ public class GoodsController {
 
         try {
             Goods goods = goodsService.deleteGoodsByGoodsId(goodsId);
-            responseBody = GoodsResponseModel.deleteSuccess(goods);
+            responseBody = GoodsResponseModel.of(goods);
             return new ResponseEntity<>(responseBody, HttpStatus.NO_CONTENT);
         } catch (ForbiddenForShopException e) {
-            responseBody = GoodsResponseModel.forbiddenForShop(e.getMessage());
+            responseBody = GoodsResponseModel.error(e.getMessage());
             return new ResponseEntity<>(responseBody, HttpStatus.FORBIDDEN);
         } catch (ResourceNotFoundException e) {
-            responseBody = GoodsResponseModel.notFound(e.getMessage());
+            responseBody = GoodsResponseModel.error(e.getMessage());
             return new ResponseEntity<>(responseBody, HttpStatus.NOT_FOUND);
         }
     }

@@ -11,19 +11,11 @@ public class GoodsResponseModel {
         this.data = data;
     }
 
-    public static GoodsResponseModel createdSuccess(Goods goods) {
+    public static GoodsResponseModel of(Goods goods) {
         return new GoodsResponseModel(null, goods);
     }
 
-    public static GoodsResponseModel deleteSuccess(Goods goods) {
-        return new GoodsResponseModel(null, goods);
-    }
-
-    public static GoodsResponseModel forbiddenForShop(String message) {
-        return new GoodsResponseModel(message, null);
-    }
-
-    public static GoodsResponseModel notFound(String message) {
+    public static GoodsResponseModel error(String message) {
         return new GoodsResponseModel(message, null);
     }
 
