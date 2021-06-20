@@ -24,7 +24,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
-@RequestMapping("/api/v1")
+@RequestMapping("/api/v1/goods")
 public class GoodsController {
     private final GoodsService goodsService;
 
@@ -38,7 +38,7 @@ public class GoodsController {
      * @param goods 商品信息
      * @return 创建好的商品信息
      */
-    @PostMapping("/goods")
+    @PostMapping
     public ResponseEntity<CommonResponseModel<Goods>> createGoods(@RequestBody Goods goods) {
         sanitize(goods);
         CommonResponseModel<Goods> responseBody;
@@ -59,7 +59,7 @@ public class GoodsController {
      * @param goodsId 商品ID
      * @return 被删除的商品信息
      */
-    @DeleteMapping("/goods/{id}")
+    @DeleteMapping("/{id}")
     public ResponseEntity<CommonResponseModel<Goods>> deleteGoods(@PathVariable("id") Long goodsId) {
         CommonResponseModel<Goods> responseBody;
 
@@ -84,7 +84,7 @@ public class GoodsController {
      * @param shopId   店铺ID，若传递，则只显示该店铺中的商品
      * @return 查询到的商品列表信息
      */
-    @GetMapping("/goods")
+    @GetMapping
     public ResponseEntity<PaginationResponseModel<List<Goods>>> getGoodsListByShopId(@RequestParam Integer pageNum,
                                                                                      @RequestParam Integer pageSize,
                                                                                      @RequestParam(required = false)
@@ -100,7 +100,7 @@ public class GoodsController {
      * @param goods   商品信息
      * @return 更新后的商品信息
      */
-    @PatchMapping("/goods")
+    @PatchMapping
     public ResponseEntity<CommonResponseModel<Goods>> updateGoods(@PathParam("id") Long goodsId,
                                                            @RequestBody Goods goods) {
         sanitize(goods);
