@@ -90,7 +90,7 @@ public class GoodsController {
                                                                                      @RequestParam(required = false)
                                                                                          Integer shopId) {
         PaginationResponseModel<Goods> responseBody = goodsService.getGoodsByShopId(pageNum, pageSize, shopId);
-        return new ResponseEntity<>(responseBody, HttpStatus.OK);
+        return ResponseEntity.of(Optional.of(responseBody));
     }
 
     /**
