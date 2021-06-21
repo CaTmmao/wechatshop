@@ -55,14 +55,11 @@ public class AuthIntegrationTest extends AbstractIntegrationTest {
             6.查看登录状态: 发送 "/api/session" get 请求,在 header 添加 cookie,返回未登录状态
         */
 
-        //1&2&3
-        String sessionId = loginAndGetSessionId();
+        //1&2&3&4
+        SessionIdAndUserInfo sessionIdAndUserInfo = afterLoginReturnSessionIdAndUserInfo();
         HttpHeaders headers = new HttpHeaders();
-        headers.add("Cookie", sessionId);
+        headers.add("Cookie", sessionIdAndUserInfo.sessionId);
         HttpEntity<?> requestEntity = new HttpEntity<>(null, headers);
-
-        //4.查看登录状态: 发送 "/api/session" get 请求,在 header 添加 cookie,返回已登录状态
-        checkLoginStatus(requestEntity, true);
 
         //5.登出: 发送 "/api/session" delete 请求,在 header 添加 cookie
         ResponseEntity<String> response5 =

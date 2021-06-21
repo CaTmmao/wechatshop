@@ -3,6 +3,7 @@ package com.catmmao.wechatshop.integration;
 import java.util.List;
 
 import com.catmmao.wechatshop.model.TelAndCode;
+import com.catmmao.wechatshop.model.generated.User;
 import com.catmmao.wechatshop.model.response.UserLoginResponseModel;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -51,7 +52,7 @@ public class AbstractIntegrationTest {
      * @param entity  请求内容,包括 header 和 body
      * @param ifLogin 断言状态是否登录
      */
-    protected void checkLoginStatus(HttpEntity<?> entity, boolean ifLogin) {
+    protected UserLoginResponseModel checkLoginStatus(HttpEntity<?> entity, boolean ifLogin) {
         ResponseEntity<UserLoginResponseModel> response =
             restTemplate.exchange(getUrl("/session"), HttpMethod.GET, entity, UserLoginResponseModel.class);
 
@@ -61,10 +62,12 @@ public class AbstractIntegrationTest {
         } else {
             Assertions.assertFalse(response.getBody().isLogin());
         }
+
+        return response.getBody();
     }
 
     // 登录 && 返回登录后获取的 sessionId
-    protected String loginAndGetSessionId() {
+    protected SessionIdAndUserInfo afterLoginReturnSessionIdAndUserInfo() {
         //1.查看登录状态: 发送 "/api/session" get 请求,返回未登录状态
         checkLoginStatus(null, false);
 
@@ -85,6 +88,24 @@ public class AbstractIntegrationTest {
             .findFirst()
             .get();
 
-        return getSessionId(cookie);
+        String sessionId = getSessionId(cookie);
+
+        //4.查看登录状态: 发送 "/api/session" get 请求,在 header 添加 cookie,返回已登录状态
+        HttpHeaders headers = new HttpHeaders();
+        headers.add("Cookie", sessionId);
+        HttpEntity<?> requestEntity = new HttpEntity<>(null, headers);
+        UserLoginResponseModel userLoginResponseModel = checkLoginStatus(requestEntity, true);
+
+        return new SessionIdAndUserInfo(sessionId, userLoginResponseModel.getUser());
+    }
+
+    public static class SessionIdAndUserInfo {
+        String sessionId;
+        User user;
+
+        public SessionIdAndUserInfo(String sessionId, User user) {
+            this.sessionId = sessionId;
+            this.user = user;
+        }
     }
 }
