@@ -41,6 +41,13 @@
             <artifactId>shiro-spring-boot-web-starter</artifactId>
             <version>1.7.1</version>
         </dependency>
+        <!-- https://mvnrepository.com/artifact/org.flywaydb/flyway-core -->
+        <!--用于集成测试时初始化数据库数据-->
+        <dependency>
+            <groupId>org.flywaydb</groupId>
+            <artifactId>flyway-core</artifactId>
+            <version>6.5.7</version>
+        </dependency>
     </dependencies>
 
     <build>
