@@ -1,6 +1,5 @@
 package com.catmmao.wechatshop.controller;
 
-import java.util.Date;
 import java.util.Optional;
 import javax.websocket.server.PathParam;
 
@@ -104,7 +103,6 @@ public class GoodsController {
                                                            @RequestBody Goods goods) {
         sanitize(goods);
         goods.setId(goodsId);
-        goods.setUpdatedAt(new Date());
         CommonResponseModel<Goods> responseBody;
 
         try {
