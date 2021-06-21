@@ -20,6 +20,10 @@ public class HttpException extends RuntimeException {
         return new HttpException(message, HttpStatus.NOT_FOUND);
     }
 
+    public static HttpException badRequest(String message) {
+        return new HttpException(message, HttpStatus.BAD_REQUEST);
+    }
+
     public static HttpException forbidden(String message) {
         return new HttpException(message, HttpStatus.FORBIDDEN);
     }
