@@ -5,8 +5,7 @@ import java.util.List;
 import com.catmmao.wechatshop.UserContext;
 import com.catmmao.wechatshop.dao.mapper.GoodsMapper;
 import com.catmmao.wechatshop.dao.mapper.ShopMapper;
-import com.catmmao.wechatshop.exception.ForbiddenForShopException;
-import com.catmmao.wechatshop.exception.ResourceNotFoundException;
+import com.catmmao.wechatshop.exception.HttpException;
 import com.catmmao.wechatshop.model.DbDataStatus;
 import com.catmmao.wechatshop.model.generated.Goods;
 import com.catmmao.wechatshop.model.generated.GoodsExample;
@@ -37,7 +36,7 @@ public class GoodsService {
 
         Long userId = UserContext.getCurrentUser().getId();
         if (shop == null || !userId.equals(shop.getOwnerUserId())) {
-            throw new ForbiddenForShopException("店铺不属于该用户");
+            throw HttpException.forbidden("店铺不属于该用户");
         } else {
             long id = goodsMapper.insertSelective(goods);
             goods.setId(id);
@@ -55,7 +54,7 @@ public class GoodsService {
         Goods goods = goodsMapper.selectByPrimaryKey(goodsId);
 
         if (goods == null) {
-            throw new ResourceNotFoundException("商品未找到！");
+            throw HttpException.resourceNotFound("商品未找到！");
         }
 
         checkUserIfShopOwner(goods.getShopId());
@@ -120,7 +119,7 @@ public class GoodsService {
 
         int affectedRecord = goodsMapper.updateByPrimaryKeySelective(goods);
         if (affectedRecord == 0) {
-            throw new ResourceNotFoundException("找不到该商品");
+            throw HttpException.resourceNotFound("找不到该商品");
         }
 
         return goods;
@@ -135,7 +134,7 @@ public class GoodsService {
         Shop shop = shopMapper.selectByPrimaryKey(shopId);
         Long userId = UserContext.getCurrentUser().getId();
         if (!userId.equals(shop.getOwnerUserId())) {
-            throw new ForbiddenForShopException("店铺不属于该用户");
+            throw HttpException.forbidden("店铺不属于该用户");
         }
     }
 }

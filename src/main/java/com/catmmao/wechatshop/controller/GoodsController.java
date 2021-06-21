@@ -3,8 +3,7 @@ package com.catmmao.wechatshop.controller;
 import java.util.Optional;
 import javax.websocket.server.PathParam;
 
-import com.catmmao.wechatshop.exception.ForbiddenForShopException;
-import com.catmmao.wechatshop.exception.ResourceNotFoundException;
+import com.catmmao.wechatshop.exception.HttpException;
 import com.catmmao.wechatshop.model.generated.Goods;
 import com.catmmao.wechatshop.model.response.CommonResponseModel;
 import com.catmmao.wechatshop.model.response.PaginationResponseModel;
@@ -45,9 +44,9 @@ public class GoodsController {
             goods = goodsService.createGoods(goods);
             responseBody = CommonResponseModel.of(goods);
             return new ResponseEntity<>(responseBody, HttpStatus.CREATED);
-        } catch (ForbiddenForShopException e) {
+        } catch (HttpException e) {
             responseBody = CommonResponseModel.error(e.getMessage());
-            return new ResponseEntity<>(responseBody, HttpStatus.FORBIDDEN);
+            return new ResponseEntity<>(responseBody, e.getHttpStatus());
         }
     }
 
@@ -65,12 +64,9 @@ public class GoodsController {
             Goods goods = goodsService.deleteGoodsByGoodsId(goodsId);
             responseBody = CommonResponseModel.of(goods);
             return new ResponseEntity<>(responseBody, HttpStatus.NO_CONTENT);
-        } catch (ForbiddenForShopException e) {
+        } catch (HttpException e) {
             responseBody = CommonResponseModel.error(e.getMessage());
-            return new ResponseEntity<>(responseBody, HttpStatus.FORBIDDEN);
-        } catch (ResourceNotFoundException e) {
-            responseBody = CommonResponseModel.error(e.getMessage());
-            return new ResponseEntity<>(responseBody, HttpStatus.NOT_FOUND);
+            return new ResponseEntity<>(responseBody, e.getHttpStatus());
         }
     }
 
@@ -109,12 +105,9 @@ public class GoodsController {
             Goods result = goodsService.updateGoods(goods);
             responseBody = CommonResponseModel.of(result);
             return ResponseEntity.of(Optional.of(responseBody));
-        } catch (ResourceNotFoundException e) {
+        } catch (HttpException e) {
             responseBody = CommonResponseModel.error(e.getMessage());
-            return new ResponseEntity<>(responseBody, HttpStatus.NOT_FOUND);
-        } catch (ForbiddenForShopException e) {
-            responseBody = CommonResponseModel.error(e.getMessage());
-            return new ResponseEntity<>(responseBody, HttpStatus.FORBIDDEN);
+            return new ResponseEntity<>(responseBody, e.getHttpStatus());
         }
     }
 
