@@ -38,7 +38,7 @@ public class GoodsService {
         if (shop == null || !userId.equals(shop.getOwnerUserId())) {
             throw new ForbiddenForShopException("店铺不属于该用户");
         } else {
-            long id = goodsMapper.insert(goods);
+            long id = goodsMapper.insertSelective(goods);
             goods.setId(id);
             return goods;
         }

@@ -40,7 +40,6 @@ public class GoodsController {
     @PostMapping
     public ResponseEntity<CommonResponseModel<Goods>> createGoods(@RequestBody Goods goods) {
         sanitize(goods);
-        goods.setCreatedAt(new Date());
         CommonResponseModel<Goods> responseBody;
 
         try {
