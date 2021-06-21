@@ -28,6 +28,7 @@ public class GoodsService {
 
     /**
      * 创建商品
+     *
      * @param goods 商品信息
      * @return 创建好的商品信息
      */
@@ -46,6 +47,7 @@ public class GoodsService {
 
     /**
      * 删除商品
+     *
      * @param goodsId 商品 id
      * @return 已删除的商品信息
      */
@@ -89,6 +91,7 @@ public class GoodsService {
 
     /**
      * 计算商品总数量
+     *
      * @param shopId 店铺 id
      * @return 商品总数量
      */
@@ -107,6 +110,11 @@ public class GoodsService {
         return (int) goodsMapper.countByExample(goodsExample);
     }
 
+    /**
+     * 更新商品
+     * @param goods 商品信息
+     * @return 更新后的商品信息
+     */
     public Goods updateGoods(Goods goods) {
         checkUserIfShopOwner(goods.getShopId());
 
