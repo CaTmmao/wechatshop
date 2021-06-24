@@ -192,4 +192,24 @@ class GoodsServiceTest {
         HttpException e = assertThrows(HttpException.class, () -> goodsService.updateGoods(goods));
         assertEquals(HttpStatus.FORBIDDEN, e.getHttpStatus());
     }
+
+    @Test
+    public void getGoodsByGoodsIdSucceed() {
+        // arrange
+        when(goodsMapper.selectByPrimaryKey(anyLong())).thenReturn(goods);
+
+        // act && assert
+        assertEquals(goods, goodsService.getGoodsByGoodsId(anyLong()));
+    }
+
+    @Test
+    public void getGoodsByGoodsIdThrowExceptionIfGoodsNotFound() {
+        // arrange
+        when(goodsMapper.selectByPrimaryKey(anyLong())).thenReturn(null);
+
+        // act && assert
+        HttpException e = assertThrows(HttpException.class, () -> goodsService.getGoodsByGoodsId(anyLong()));
+        assertEquals(HttpStatus.NOT_FOUND, e.getHttpStatus());
+        assertEquals("找不到该商品", e.getMessage());
+    }
 }
