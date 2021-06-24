@@ -112,6 +112,25 @@ public class GoodsController {
     }
 
     /**
+     * 获取指定ID的商品
+     * @param goodsId 商品ID
+     * @return 商品信息
+     */
+    @GetMapping("/{id}")
+    public ResponseEntity<CommonResponseModel<Goods>> getGoodsByGoodsId(@PathVariable("id") long goodsId) {
+        CommonResponseModel<Goods> responseBody;
+
+        try {
+            Goods result = goodsService.getGoodsByGoodsId(goodsId);
+            responseBody = CommonResponseModel.of(result);
+            return ResponseEntity.of(Optional.of(responseBody));
+        } catch (HttpException e) {
+            responseBody = CommonResponseModel.error(e.getMessage());
+            return new ResponseEntity<>(responseBody, e.getHttpStatus());
+        }
+    }
+
+    /**
      * 删除不需要的数据（仅针对创建商品接口）
      *
      * @param goods 商品对象

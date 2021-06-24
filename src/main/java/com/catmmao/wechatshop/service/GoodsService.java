@@ -126,6 +126,22 @@ public class GoodsService {
     }
 
     /**
+     * 获取指定ID的商品
+     *
+     * @param goodsId 商品ID
+     * @return 商品信息
+     */
+    public Goods getGoodsByGoodsId(long goodsId) {
+        Goods goods = goodsMapper.selectByPrimaryKey(goodsId);
+
+        if (goods == null) {
+            throw HttpException.resourceNotFound("找不到该商品");
+        } else {
+            return goods;
+        }
+    }
+
+    /**
      * 检查用户是否是店铺的拥有者
      *
      * @param shopId 店铺ID
