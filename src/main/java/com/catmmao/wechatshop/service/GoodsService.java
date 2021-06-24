@@ -111,6 +111,7 @@ public class GoodsService {
 
     /**
      * 更新商品
+     *
      * @param goods 商品信息
      * @return 更新后的商品信息
      */

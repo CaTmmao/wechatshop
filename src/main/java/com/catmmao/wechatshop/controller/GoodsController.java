@@ -80,9 +80,9 @@ public class GoodsController {
      */
     @GetMapping
     public ResponseEntity<PaginationResponseModel<Goods>> getGoodsListByShopId(@RequestParam Integer pageNum,
-                                                                                     @RequestParam Integer pageSize,
-                                                                                     @RequestParam(required = false)
-                                                                                         Integer shopId) {
+                                                                               @RequestParam Integer pageSize,
+                                                                               @RequestParam(required = false)
+                                                                                   Integer shopId) {
         PaginationResponseModel<Goods> responseBody = goodsService.getGoodsByShopId(pageNum, pageSize, shopId);
         return ResponseEntity.of(Optional.of(responseBody));
     }
@@ -96,7 +96,7 @@ public class GoodsController {
      */
     @PatchMapping
     public ResponseEntity<CommonResponseModel<Goods>> updateGoods(@PathParam("id") Long goodsId,
-                                                           @RequestBody Goods goods) {
+                                                                  @RequestBody Goods goods) {
         sanitize(goods);
         goods.setId(goodsId);
         CommonResponseModel<Goods> responseBody;
