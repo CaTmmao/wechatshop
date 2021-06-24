@@ -3,7 +3,6 @@ package com.catmmao.wechatshop.controller;
 import java.util.Optional;
 import javax.websocket.server.PathParam;
 
-import com.catmmao.wechatshop.exception.HttpException;
 import com.catmmao.wechatshop.model.generated.Goods;
 import com.catmmao.wechatshop.model.response.CommonResponseModel;
 import com.catmmao.wechatshop.model.response.PaginationResponseModel;
@@ -38,16 +37,9 @@ public class GoodsController {
     @PostMapping
     public ResponseEntity<CommonResponseModel<Goods>> createGoods(@RequestBody Goods goods) {
         sanitize(goods);
-        CommonResponseModel<Goods> responseBody;
-
-        try {
-            goods = goodsService.createGoods(goods);
-            responseBody = CommonResponseModel.of(goods);
-            return new ResponseEntity<>(responseBody, HttpStatus.CREATED);
-        } catch (HttpException e) {
-            responseBody = CommonResponseModel.error(e.getMessage());
-            return new ResponseEntity<>(responseBody, e.getHttpStatus());
-        }
+        goods = goodsService.createGoods(goods);
+        CommonResponseModel<Goods> responseBody = CommonResponseModel.of(goods);
+        return new ResponseEntity<>(responseBody, HttpStatus.CREATED);
     }
 
     /**
@@ -58,16 +50,9 @@ public class GoodsController {
      */
     @DeleteMapping("/{id}")
     public ResponseEntity<CommonResponseModel<Goods>> deleteGoods(@PathVariable("id") Long goodsId) {
-        CommonResponseModel<Goods> responseBody;
-
-        try {
-            Goods goods = goodsService.deleteGoodsByGoodsId(goodsId);
-            responseBody = CommonResponseModel.of(goods);
-            return new ResponseEntity<>(responseBody, HttpStatus.NO_CONTENT);
-        } catch (HttpException e) {
-            responseBody = CommonResponseModel.error(e.getMessage());
-            return new ResponseEntity<>(responseBody, e.getHttpStatus());
-        }
+        Goods goods = goodsService.deleteGoodsByGoodsId(goodsId);
+        CommonResponseModel<Goods> responseBody = CommonResponseModel.of(goods);
+        return new ResponseEntity<>(responseBody, HttpStatus.NO_CONTENT);
     }
 
     /**
@@ -99,35 +84,22 @@ public class GoodsController {
                                                                   @RequestBody Goods goods) {
         sanitize(goods);
         goods.setId(goodsId);
-        CommonResponseModel<Goods> responseBody;
-
-        try {
-            Goods result = goodsService.updateGoods(goods);
-            responseBody = CommonResponseModel.of(result);
-            return ResponseEntity.of(Optional.of(responseBody));
-        } catch (HttpException e) {
-            responseBody = CommonResponseModel.error(e.getMessage());
-            return new ResponseEntity<>(responseBody, e.getHttpStatus());
-        }
+        Goods result = goodsService.updateGoods(goods);
+        CommonResponseModel<Goods> responseBody = CommonResponseModel.of(result);
+        return ResponseEntity.of(Optional.of(responseBody));
     }
 
     /**
      * 获取指定ID的商品
+     *
      * @param goodsId 商品ID
      * @return 商品信息
      */
     @GetMapping("/{id}")
     public ResponseEntity<CommonResponseModel<Goods>> getGoodsByGoodsId(@PathVariable("id") long goodsId) {
-        CommonResponseModel<Goods> responseBody;
-
-        try {
-            Goods result = goodsService.getGoodsByGoodsId(goodsId);
-            responseBody = CommonResponseModel.of(result);
-            return ResponseEntity.of(Optional.of(responseBody));
-        } catch (HttpException e) {
-            responseBody = CommonResponseModel.error(e.getMessage());
-            return new ResponseEntity<>(responseBody, e.getHttpStatus());
-        }
+        Goods result = goodsService.getGoodsByGoodsId(goodsId);
+        CommonResponseModel<Goods> responseBody = CommonResponseModel.of(result);
+        return ResponseEntity.of(Optional.of(responseBody));
     }
 
     /**

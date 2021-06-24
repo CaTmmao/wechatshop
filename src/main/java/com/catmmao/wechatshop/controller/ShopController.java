@@ -3,7 +3,6 @@ package com.catmmao.wechatshop.controller;
 import java.util.Optional;
 
 import com.catmmao.wechatshop.UserContext;
-import com.catmmao.wechatshop.exception.HttpException;
 import com.catmmao.wechatshop.model.generated.Shop;
 import com.catmmao.wechatshop.model.response.CommonResponseModel;
 import com.catmmao.wechatshop.model.response.PaginationResponseModel;
@@ -44,17 +43,10 @@ public class ShopController {
     @PostMapping
     public ResponseEntity<CommonResponseModel<Shop>> createShop(@RequestBody Shop shop) {
         sanitize(shop);
-        CommonResponseModel<Shop> responseBody;
-
-        try {
-            long creatorId = UserContext.getCurrentUser().getId();
-            Shop result = shopService.createShop(shop, creatorId);
-            responseBody = CommonResponseModel.of(result);
-            return new ResponseEntity<>(responseBody, HttpStatus.CREATED);
-        } catch (HttpException e) {
-            responseBody = CommonResponseModel.error(e.getMessage());
-            return new ResponseEntity<>(responseBody, e.getHttpStatus());
-        }
+        long creatorId = UserContext.getCurrentUser().getId();
+        Shop result = shopService.createShop(shop, creatorId);
+        CommonResponseModel<Shop> responseBody = CommonResponseModel.of(result);
+        return new ResponseEntity<>(responseBody, HttpStatus.CREATED);
     }
 
     /**
@@ -68,17 +60,10 @@ public class ShopController {
     public ResponseEntity<CommonResponseModel<Shop>> updateGoods(@PathVariable("id") Long shopId,
                                                                  @RequestBody Shop shop) {
         sanitize(shop);
-        CommonResponseModel<Shop> responseBody;
-
-        try {
-            Long userId = UserContext.getCurrentUser().getId();
-            shopService.updateShop(shop, userId);
-            responseBody = CommonResponseModel.of(shop);
-            return ResponseEntity.of(Optional.of(responseBody));
-        } catch (HttpException e) {
-            responseBody = CommonResponseModel.error(e.getMessage());
-            return new ResponseEntity<>(responseBody, e.getHttpStatus());
-        }
+        Long userId = UserContext.getCurrentUser().getId();
+        shopService.updateShop(shop, userId);
+        CommonResponseModel<Shop> responseBody = CommonResponseModel.of(shop);
+        return ResponseEntity.of(Optional.of(responseBody));
     }
 
     /**
@@ -89,17 +74,10 @@ public class ShopController {
      */
     @DeleteMapping("/{id}")
     public ResponseEntity<CommonResponseModel<Shop>> deleteShop(@PathVariable("id") Long shopId) {
-        CommonResponseModel<Shop> responseBody;
-
-        try {
-            Long userId = UserContext.getCurrentUser().getId();
-            Shop result = shopService.deleteShop(shopId, userId);
-            responseBody = CommonResponseModel.of(result);
-            return new ResponseEntity<>(responseBody, HttpStatus.NO_CONTENT);
-        } catch (HttpException e) {
-            responseBody = CommonResponseModel.error(e.getMessage());
-            return new ResponseEntity<>(responseBody, e.getHttpStatus());
-        }
+        Long userId = UserContext.getCurrentUser().getId();
+        Shop result = shopService.deleteShop(shopId, userId);
+        CommonResponseModel<Shop> responseBody = CommonResponseModel.of(result);
+        return new ResponseEntity<>(responseBody, HttpStatus.NO_CONTENT);
     }
 
     /**
@@ -126,15 +104,8 @@ public class ShopController {
      */
     @GetMapping("/{id}")
     public ResponseEntity<CommonResponseModel<Shop>> getShopByShopId(@PathVariable("id") Long shopId) {
-        CommonResponseModel<Shop> responseBody;
-
-        try {
-            Shop result = shopService.getShopByShopId(shopId);
-            responseBody = CommonResponseModel.of(result);
-            return ResponseEntity.of(Optional.of(responseBody));
-        } catch (HttpException e) {
-            responseBody = CommonResponseModel.error(e.getMessage());
-            return new ResponseEntity<>(responseBody, e.getHttpStatus());
-        }
+        Shop result = shopService.getShopByShopId(shopId);
+        CommonResponseModel<Shop> responseBody = CommonResponseModel.of(result);
+        return ResponseEntity.of(Optional.of(responseBody));
     }
 }
