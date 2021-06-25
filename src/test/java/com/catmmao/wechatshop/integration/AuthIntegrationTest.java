@@ -23,19 +23,19 @@ public class AuthIntegrationTest extends AbstractIntegrationTest {
     private TestRestTemplate restTemplate;
 
     @Test
-    public void testSendCodeWithValidParamReturnOk() {
+    public void sendCodeSucceed() {
         ResponseEntity<String> response = restTemplate.postForEntity(getUrl("/code"), CORRECT_ALL_PARAM, String.class);
         Assertions.assertEquals(HttpStatus.OK, response.getStatusCode());
     }
 
     @Test
-    public void testSendCodeWithNoTelParamReturnBadRequest() {
+    public void sendCodeFailIfDoNotHasParam() {
         ResponseEntity<String> response = restTemplate.postForEntity(getUrl("/code"), NULL_PARAM, String.class);
         Assertions.assertEquals(HttpStatus.BAD_REQUEST, response.getStatusCode());
     }
 
     @Test
-    public void testNeedAuthenticatedControllerWithUnLoginStatusReturn401() {
+    public void needAuthenticatedControllerReturn401IfUserNonLoggedIn() {
         ResponseEntity<String> response = restTemplate.postForEntity(getUrl("/any"), null, String.class);
         Assertions.assertEquals(HttpStatus.UNAUTHORIZED, response.getStatusCode());
     }
@@ -45,7 +45,7 @@ public class AuthIntegrationTest extends AbstractIntegrationTest {
      * 对 controller 进行测试时记得手动带上 cookie,因为它不会和浏览器一样自己带上 cookie
      */
     @Test
-    public void loginLogoutTest() {
+    public void loginLogout() {
         /*
             1.查看登录状态: 发送 "/api/session" get 请求,返回未登录状态
             2.获取手机号验证码: 发送 "/api/code" post 请求,参数是手机号

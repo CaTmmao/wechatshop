@@ -63,7 +63,7 @@ class GoodsServiceTest {
     }
 
     @Test
-    public void createGoodsSucceedIfUserIsOwner() {
+    public void createGoodsSucceed() {
         // arrange
         when(shopMapper.selectByPrimaryKey(anyLong())).thenReturn(shop);
         when(shop.getOwnerUserId()).thenReturn(UserContext.getCurrentUser().getId());
@@ -75,7 +75,7 @@ class GoodsServiceTest {
     }
 
     @Test
-    public void createGoodsFailIfUserNotOwner() {
+    public void createGoodsThrowExceptionIfUserNotOwner() {
         // arrange
         when(shopMapper.selectByPrimaryKey(anyLong())).thenReturn(shop);
         when(shop.getOwnerUserId()).thenReturn(UserContext.getCurrentUser().getId() + 1L);
@@ -141,7 +141,7 @@ class GoodsServiceTest {
     }
 
     @Test
-    public void getGoodsSuccessWithNonNullShopId() {
+    public void getGoodsSucceedWithNonNullShopId() {
         // arrange
         Integer pageNum = 1;
         Integer pageSize = 10;
@@ -160,7 +160,7 @@ class GoodsServiceTest {
     }
 
     @Test
-    public void updateGoodsSucceedIfUserIsOwner() {
+    public void updateGoodsSucceed() {
         // arrange
         when(shopMapper.selectByPrimaryKey(anyLong())).thenReturn(shop);
         when(shop.getOwnerUserId()).thenReturn(UserContext.getCurrentUser().getId());

@@ -9,18 +9,18 @@ class TelVerificationServiceTest {
     private static TelAndCode noTel = new TelAndCode(null, null);
 
     @Test
-    public void returnIfValid() {
+    public void verifySucceed() {
         // TelVerificationService 没有任何依赖，因此直接实例化就可以了
         Assertions.assertTrue(new TelVerificationService().verifyTel(correctTelFormat));
     }
 
     @Test
-    public void noTelField() {
+    public void verifyFailIfDoNotHasTel() {
         Assertions.assertFalse(new TelVerificationService().verifyTel(noTel));
     }
 
     @Test
-    public void noParam() {
+    public void verifyFailIfDoNotHaseParam() {
         Assertions.assertFalse(new TelVerificationService().verifyTel(null));
     }
 }
