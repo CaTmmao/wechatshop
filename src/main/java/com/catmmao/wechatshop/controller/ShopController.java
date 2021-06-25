@@ -2,7 +2,6 @@ package com.catmmao.wechatshop.controller;
 
 import java.util.Optional;
 
-import com.catmmao.wechatshop.UserContext;
 import com.catmmao.wechatshop.model.generated.Shop;
 import com.catmmao.wechatshop.model.response.CommonResponseModel;
 import com.catmmao.wechatshop.model.response.PaginationResponseModel;
@@ -43,8 +42,7 @@ public class ShopController {
     @PostMapping
     public ResponseEntity<CommonResponseModel<Shop>> createShop(@RequestBody Shop shop) {
         sanitize(shop);
-        long creatorId = UserContext.getCurrentUser().getId();
-        Shop result = shopService.createShop(shop, creatorId);
+        Shop result = shopService.createShop(shop);
         CommonResponseModel<Shop> responseBody = CommonResponseModel.of(result);
         return new ResponseEntity<>(responseBody, HttpStatus.CREATED);
     }
@@ -60,8 +58,7 @@ public class ShopController {
     public ResponseEntity<CommonResponseModel<Shop>> updateGoods(@PathVariable("id") Long shopId,
                                                                  @RequestBody Shop shop) {
         sanitize(shop);
-        Long userId = UserContext.getCurrentUser().getId();
-        shopService.updateShop(shop, userId);
+        shopService.updateShop(shop);
         CommonResponseModel<Shop> responseBody = CommonResponseModel.of(shop);
         return ResponseEntity.of(Optional.of(responseBody));
     }
@@ -74,8 +71,7 @@ public class ShopController {
      */
     @DeleteMapping("/{id}")
     public ResponseEntity<CommonResponseModel<Shop>> deleteShop(@PathVariable("id") Long shopId) {
-        Long userId = UserContext.getCurrentUser().getId();
-        Shop result = shopService.deleteShop(shopId, userId);
+        Shop result = shopService.deleteShop(shopId);
         CommonResponseModel<Shop> responseBody = CommonResponseModel.of(result);
         return new ResponseEntity<>(responseBody, HttpStatus.NO_CONTENT);
     }
@@ -91,8 +87,7 @@ public class ShopController {
     public ResponseEntity<PaginationResponseModel<Shop>> getMyShopList(@RequestParam int pageNum,
                                                                        @RequestParam int pageSize) {
         PaginationResponseModel<Shop> responseBody;
-        Long userId = UserContext.getCurrentUser().getId();
-        responseBody = shopService.getMyShopListByUserId(userId, pageNum, pageSize);
+        responseBody = shopService.getMyShopListByUserId(pageNum, pageSize);
         return ResponseEntity.of(Optional.of(responseBody));
     }
 

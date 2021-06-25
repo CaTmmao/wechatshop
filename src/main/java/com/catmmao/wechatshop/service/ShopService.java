@@ -2,6 +2,7 @@ package com.catmmao.wechatshop.service;
 
 import java.util.List;
 
+import com.catmmao.wechatshop.UserContext;
 import com.catmmao.wechatshop.dao.mapper.ShopMapper;
 import com.catmmao.wechatshop.exception.HttpException;
 import com.catmmao.wechatshop.model.DbDataStatus;
@@ -21,12 +22,11 @@ public class ShopService {
     /**
      * 创建店铺
      *
-     * @param shop      店铺信息
-     * @param creatorId 创建者ID
+     * @param shop 店铺信息
      * @return 创建后的店铺信息
      */
-    public Shop createShop(Shop shop, long creatorId) {
-        shop.setOwnerUserId(creatorId);
+    public Shop createShop(Shop shop) {
+        shop.setOwnerUserId(UserContext.getCurrentUser().getId());
 
         ShopExample shopExample = new ShopExample();
         shopExample.createCriteria().andNameEqualTo(shop.getName());
@@ -46,9 +46,9 @@ public class ShopService {
      * 修改店铺
      *
      * @param shop   店铺信息
-     * @param userId 店铺拥有者ID
      */
-    public void updateShop(Shop shop, Long userId) {
+    public void updateShop(Shop shop) {
+        Long userId = UserContext.getCurrentUser().getId();
         Shop shopInDatabase = shopMapper.selectByPrimaryKey(shop.getId());
 
         if (shopInDatabase == null) {
@@ -63,10 +63,10 @@ public class ShopService {
      * 删除店铺
      *
      * @param shopId 店铺ID
-     * @param userId 店铺拥有者ID
      * @return 已删除的店铺信息
      */
-    public Shop deleteShop(Long shopId, Long userId) {
+    public Shop deleteShop(Long shopId) {
+        Long userId = UserContext.getCurrentUser().getId();
         Shop shopInDatabase = shopMapper.selectByPrimaryKey(shopId);
 
         if (shopInDatabase == null) {
@@ -82,12 +82,12 @@ public class ShopService {
     /**
      * 获取当前用户拥有的所有店铺
      *
-     * @param userId   用户ID
      * @param pageNum  当前页数，从1开始
      * @param pageSize 每页显示的数量
      * @return 获取到的店铺列表
      */
-    public PaginationResponseModel<Shop> getMyShopListByUserId(Long userId, int pageNum, int pageSize) {
+    public PaginationResponseModel<Shop> getMyShopListByUserId(int pageNum, int pageSize) {
+        Long userId = UserContext.getCurrentUser().getId();
         // 店铺总数量
         int totalNumber = countShop(userId);
         // 总页数
