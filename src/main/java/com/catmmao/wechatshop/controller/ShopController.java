@@ -29,6 +29,7 @@ public class ShopController {
 
     public void sanitize(Shop shop) {
         shop.setId(null);
+        shop.setStatus(null);
         shop.setCreatedAt(null);
         shop.setUpdatedAt(null);
     }

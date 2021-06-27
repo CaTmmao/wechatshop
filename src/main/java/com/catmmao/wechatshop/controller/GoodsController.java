@@ -111,5 +111,6 @@ public class GoodsController {
         goods.setId(null);
         goods.setCreatedAt(null);
         goods.setUpdatedAt(null);
+        goods.setStatus(null);
     }
 }
