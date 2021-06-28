@@ -8,5 +8,5 @@ CREATE TABLE `user`
     updated_at timestamp ON UPDATE NOW()
 );
 
-insert into "user"(id, name, tel)
-values (1, 'user1', 13544444444);
+insert into `user`(id, name, tel)
+values (1, 'user1', '13544444444');
