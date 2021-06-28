@@ -6,4 +6,7 @@ CREATE TABLE `user`
     avatar_url varchar(1024),
     created_at timestamp NOT NULL DEFAULT NOW(),
     updated_at timestamp ON UPDATE NOW()
-)
+);
+
+insert into "user"(id, name, tel)
+values (1, 'user1', 13544444444);
