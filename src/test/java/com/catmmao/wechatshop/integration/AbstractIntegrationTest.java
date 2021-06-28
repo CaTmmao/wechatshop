@@ -25,6 +25,11 @@ public class AbstractIntegrationTest {
     protected static final TelAndCode NULL_PARAM = new TelAndCode(null, null);
     protected static final TelAndCode CORRECT_ALL_PARAM = new TelAndCode("13544444444", "000000");
 
+    // cookie
+    protected String sessionId;
+    // 用户信息
+    protected User userInfo;
+
     @LocalServerPort
     protected int port;
 
@@ -67,7 +72,7 @@ public class AbstractIntegrationTest {
     }
 
     // 登录 && 返回登录后获取的 sessionId
-    protected SessionIdAndUserInfo afterLoginReturnSessionIdAndUserInfo() {
+    protected void afterLoginReturnSessionIdAndUserInfo() {
         //1.查看登录状态: 发送 "/api/session" get 请求,返回未登录状态
         checkLoginStatus(null, false);
 
@@ -88,7 +93,7 @@ public class AbstractIntegrationTest {
             .findFirst()
             .get();
 
-        String sessionId = getSessionId(cookie);
+        sessionId = getSessionId(cookie);
 
         //4.查看登录状态: 发送 "/api/session" get 请求,在 header 添加 cookie,返回已登录状态
         HttpHeaders headers = new HttpHeaders();
@@ -96,16 +101,6 @@ public class AbstractIntegrationTest {
         HttpEntity<?> requestEntity = new HttpEntity<>(null, headers);
         UserLoginResponseModel userLoginResponseModel = checkLoginStatus(requestEntity, true);
 
-        return new SessionIdAndUserInfo(sessionId, userLoginResponseModel.getUser());
-    }
-
-    public static class SessionIdAndUserInfo {
-        String sessionId;
-        User user;
-
-        public SessionIdAndUserInfo(String sessionId, User user) {
-            this.sessionId = sessionId;
-            this.user = user;
-        }
+        userInfo = userLoginResponseModel.getUser();
     }
 }

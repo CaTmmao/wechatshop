@@ -56,9 +56,9 @@ public class AuthIntegrationTest extends AbstractIntegrationTest {
         */
 
         //1&2&3&4
-        SessionIdAndUserInfo sessionIdAndUserInfo = afterLoginReturnSessionIdAndUserInfo();
+        afterLoginReturnSessionIdAndUserInfo();
         HttpHeaders headers = new HttpHeaders();
-        headers.add("Cookie", sessionIdAndUserInfo.sessionId);
+        headers.add("Cookie", sessionId);
         HttpEntity<?> requestEntity = new HttpEntity<>(null, headers);
 
         //5.登出: 发送 "/api/session" delete 请求,在 header 添加 cookie
