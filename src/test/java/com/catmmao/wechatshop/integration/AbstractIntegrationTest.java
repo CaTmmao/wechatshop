@@ -119,6 +119,8 @@ public class AbstractIntegrationTest {
                                                      ParameterizedTypeReference<T> responseType) {
         HttpHeaders headers = new HttpHeaders();
         headers.add("Cookie", sessionId);
+        headers.add("Content-Type", "application/json");
+        headers.add("Accept", "application/json");
         HttpEntity<S> requestEntity = new HttpEntity<>(requestBody, headers);
 
         return restTemplate.exchange(url, method, requestEntity, responseType);
