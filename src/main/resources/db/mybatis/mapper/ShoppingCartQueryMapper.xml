@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.catmmao.wechatshop.dao.mapper.ShoppingCartQueryMapper">
+    <select id="countHowManyShopsInUserShoppingCart" parameterType="long" resultType="int">
+        select count(distinct shop_id)
+        from shopping_cart
+        where USER_ID = #{userId}
+          and STATUS = 'ok'
+    </select>
+    <select id="selectShoppingCartDataByUserId" resultMap="getShoppingCartDataResultMap" parameterType="map">
+        select shop.id            as shop_id,
+               shop.name          as shop_name,
+               shop.description   as shop_description,
+               shop.img_url       as shop_imgUrl,
+               shop.owner_user_id as shop_ownerUserId,
+               shop.created_at    as shop_createdAt,
+               shop.updated_at    as shop_updatedAt,
+               goods.ID           as goods_id,
+               goods.NAME         as goods_name,
+               goods.DESCRIPTION  as goods_description,
+               goods.DETAILS      as goods_details,
+               goods.IMG_URL      as goods_imgUrl,
+               goods.PRICE        as goods_price,
+               sc2.NUMBER         as goods_number,
+               goods.CREATED_AT   as goods_createdAt,
+               goods.UPDATED_AT   as goods_updatedAt
+        from (
+                 select distinct shop_id
+                 from shopping_cart
+                 where USER_ID = #{userId}
+                   and STATUS = 'ok'
+                 limit #{offset},#{limit}
+             ) as sc1
+                 join shopping_cart as sc2
+                      on sc1.shop_id = sc2.shop_id
+                 join goods on sc2.GOODS_ID = goods.ID
+                 join shop on sc1.shop_id = shop.ID
+    </select>
+    <resultMap id="getShoppingCartDataResultMap" type="ShoppingCartResponseModel">
+        <association property="shop" javaType="Shop">
+            <id property="id" column="shop_id"/>
+            <result property="name" column="shop_name"/>
+            <result property="description" column="shop_description"/>
+            <result property="imgUrl" column="shop_imgUrl"/>
+            <result property="ownerUserId" column="shop_ownerUserId"/>
+            <result property="createdAt" column="shop_createdAt"/>
+            <result property="updatedAt" column="shop_updatedAt"/>
+        </association>
+        <collection property="goods" ofType="ShoppingCartGoods">
+            <id property="id" column="goods_id"/>
+            <result property="name" column="goods_name"/>
+            <result property="description" column="goods_description"/>
+            <result property="details" column="goods_details"/>
+            <result property="imgUrl" column="goods_imgUrl"/>
+            <result property="price" column="goods_price"/>
+            <result property="number" column="goods_number"/>
+            <result property="createdAt" column="goods_createdAt"/>
+            <result property="updatedAt" column="goods_updatedAt"/>
+        </collection>
+    </resultMap>
+</mapper>

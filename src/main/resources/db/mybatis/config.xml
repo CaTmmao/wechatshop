@@ -3,9 +3,17 @@
         PUBLIC "-//mybatis.org//DTD Config 3.0//EN"
         "http://mybatis.org/dtd/mybatis-3-config.dtd">
 <configuration>
+    <typeAliases>
+        <typeAlias alias="ShoppingCartResponseModel"
+                   type="com.catmmao.wechatshop.model.response.ShoppingCartResponseModel"/>
+        <typeAlias alias="Shop" type="com.catmmao.wechatshop.model.generated.Shop"/>
+        <typeAlias alias="ShoppingCartGoods" type="com.catmmao.wechatshop.model.response.ShoppingCartGoodsModel"/>
+    </typeAliases>
     <mappers>
         <mapper resource="db/mybatis/mapper/UserMapper.xml"/>
         <mapper resource="db/mybatis/mapper/GoodsMapper.xml"/>
         <mapper resource="db/mybatis/mapper/ShopMapper.xml"/>
+        <mapper resource="db/mybatis/mapper/ShoppingCartMapper.xml"/>
+        <mapper resource="db/mybatis/mapper/ShoppingCartQueryMapper.xml"/>
     </mappers>
 </configuration>
