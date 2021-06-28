@@ -10,6 +10,7 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.web.client.TestRestTemplate;
 import org.springframework.boot.web.server.LocalServerPort;
+import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
@@ -54,12 +55,16 @@ public class AbstractIntegrationTest {
     /**
      * 查看登录状态
      *
-     * @param entity  请求内容,包括 header 和 body
      * @param ifLogin 断言状态是否登录
      */
-    protected UserLoginResponseModel checkLoginStatus(HttpEntity<?> entity, boolean ifLogin) {
+    protected UserLoginResponseModel checkLoginStatus(boolean ifLogin) {
         ResponseEntity<UserLoginResponseModel> response =
-            restTemplate.exchange(getUrl("/session"), HttpMethod.GET, entity, UserLoginResponseModel.class);
+            doHttpRequest(
+                getUrl("/session"),
+                HttpMethod.GET,
+                null,
+                new ParameterizedTypeReference<UserLoginResponseModel>() {
+                });
 
         // 已登录
         if (ifLogin) {
@@ -74,7 +79,7 @@ public class AbstractIntegrationTest {
     // 登录 && 返回登录后获取的 sessionId
     protected void afterLoginReturnSessionIdAndUserInfo() {
         //1.查看登录状态: 发送 "/api/session" get 请求,返回未登录状态
-        checkLoginStatus(null, false);
+        checkLoginStatus(false);
 
         //2.获取手机号验证码: 发送 "/api/code" post 请求,参数是手机号
         ResponseEntity<String> response2 = restTemplate.postForEntity(getUrl("/code"), CORRECT_TEL, String.class);
@@ -96,11 +101,26 @@ public class AbstractIntegrationTest {
         sessionId = getSessionId(cookie);
 
         //4.查看登录状态: 发送 "/api/session" get 请求,在 header 添加 cookie,返回已登录状态
+        UserLoginResponseModel userLoginResponseModel = checkLoginStatus(true);
+        userInfo = userLoginResponseModel.getUser();
+    }
+
+    /**
+     * 发送请求
+     * 当请求需要给 header 设置 cookie 时可以用该方法，避免重复代码
+     *
+     * @param url          请求地址
+     * @param method       请求方法
+     * @param requestBody  请求体
+     * @param responseType 返回类型
+     * @return 请求响应
+     */
+    protected <T, S> ResponseEntity<T> doHttpRequest(String url, HttpMethod method, S requestBody,
+                                                     ParameterizedTypeReference<T> responseType) {
         HttpHeaders headers = new HttpHeaders();
         headers.add("Cookie", sessionId);
-        HttpEntity<?> requestEntity = new HttpEntity<>(null, headers);
-        UserLoginResponseModel userLoginResponseModel = checkLoginStatus(requestEntity, true);
+        HttpEntity<S> requestEntity = new HttpEntity<>(requestBody, headers);
 
-        userInfo = userLoginResponseModel.getUser();
+        return restTemplate.exchange(url, method, requestEntity, responseType);
     }
 }

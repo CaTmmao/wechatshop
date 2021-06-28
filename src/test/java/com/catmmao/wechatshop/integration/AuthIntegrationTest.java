@@ -7,8 +7,7 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.web.client.TestRestTemplate;
-import org.springframework.http.HttpEntity;
-import org.springframework.http.HttpHeaders;
+import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -57,16 +56,18 @@ public class AuthIntegrationTest extends AbstractIntegrationTest {
 
         //1&2&3&4
         afterLoginReturnSessionIdAndUserInfo();
-        HttpHeaders headers = new HttpHeaders();
-        headers.add("Cookie", sessionId);
-        HttpEntity<?> requestEntity = new HttpEntity<>(null, headers);
 
         //5.登出: 发送 "/api/session" delete 请求,在 header 添加 cookie
         ResponseEntity<String> response5 =
-            restTemplate.exchange(getUrl("/session"), HttpMethod.DELETE, requestEntity, String.class);
+            doHttpRequest(
+                getUrl("/session"),
+                HttpMethod.DELETE,
+                null,
+                new ParameterizedTypeReference<String>() {
+                });
         Assertions.assertEquals(HttpStatus.OK, response5.getStatusCode());
 
         //6.查看登录状态: 发送 "/api/session" get 请求,在 header 添加 cookie,返回未登录状态
-        checkLoginStatus(requestEntity, false);
+        checkLoginStatus(false);
     }
 }
