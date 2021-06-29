@@ -7,23 +7,31 @@
         where USER_ID = #{userId}
           and STATUS = 'ok'
     </select>
+    <sql id="selectShoppingCartDataField">
+               ${shop}.id            as shop_id,
+               ${shop}.name          as shop_name,
+               ${shop}.description   as shop_description,
+               ${shop}.img_url       as shop_imgUrl,
+               ${shop}.owner_user_id as shop_ownerUserId,
+               ${shop}.created_at    as shop_createdAt,
+               ${shop}.updated_at    as shop_updatedAt,
+               ${goods}.ID           as goods_id,
+               ${goods}.NAME         as goods_name,
+               ${goods}.DESCRIPTION  as goods_description,
+               ${goods}.DETAILS      as goods_details,
+               ${goods}.IMG_URL      as goods_imgUrl,
+               ${goods}.PRICE        as goods_price,
+               ${sc2}.NUMBER         as goods_number,
+               ${goods}.CREATED_AT   as goods_createdAt,
+               ${goods}.UPDATED_AT   as goods_updatedAt
+    </sql>
     <select id="selectShoppingCartDataListByUserId" resultMap="getShoppingCartDataResultMap" parameterType="map">
-        select shop.id            as shop_id,
-               shop.name          as shop_name,
-               shop.description   as shop_description,
-               shop.img_url       as shop_imgUrl,
-               shop.owner_user_id as shop_ownerUserId,
-               shop.created_at    as shop_createdAt,
-               shop.updated_at    as shop_updatedAt,
-               goods.ID           as goods_id,
-               goods.NAME         as goods_name,
-               goods.DESCRIPTION  as goods_description,
-               goods.DETAILS      as goods_details,
-               goods.IMG_URL      as goods_imgUrl,
-               goods.PRICE        as goods_price,
-               sc2.NUMBER         as goods_number,
-               goods.CREATED_AT   as goods_createdAt,
-               goods.UPDATED_AT   as goods_updatedAt
+        select
+        <include refid="selectShoppingCartDataField">
+            <property name="shop" value="shop"/>
+            <property name="goods" value="goods"/>
+            <property name="sc2" value="sc2"/>
+        </include>
         from (
                  select distinct shop_id
                  from shopping_cart
@@ -35,6 +43,22 @@
                       on sc1.shop_id = sc2.shop_id
                  join goods on sc2.GOODS_ID = goods.ID
                  join shop on sc1.shop_id = shop.ID
+    </select>
+    <select id="selectShoppingCartDataByUserIdAndShopId" resultMap="getShoppingCartDataResultMap" parameterType="map">
+        select
+        <include refid="selectShoppingCartDataField">
+            <property name="shop" value="shop"/>
+            <property name="goods" value="goods"/>
+            <property name="sc2" value="sc"/>
+        </include>
+        from (
+              shopping_cart as sc
+                 join goods on sc.GOODS_ID = goods.ID
+                 join shop on sc.shop_id = shop.ID
+            )
+        where sc.USER_ID = #{userId}
+          and sc.SHOP_ID = #{shopId}
+          and sc.STATUS = 'ok'
     </select>
     <resultMap id="getShoppingCartDataResultMap" type="ShoppingCartResponseModel">
         <association property="shop" javaType="Shop">

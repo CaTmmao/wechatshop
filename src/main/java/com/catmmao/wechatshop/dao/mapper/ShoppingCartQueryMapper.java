@@ -27,4 +27,14 @@ public interface ShoppingCartQueryMapper {
     List<ShoppingCartResponseModel> selectShoppingCartDataListByUserId(@Param("userId") long userId,
                                                                    @Param("offset") int offset,
                                                                    @Param("limit") int limit);
+
+    /**
+     * 获取当前用户购物车中特定店铺的商品信息
+     *
+     * @param userId 用户ID
+     * @param shopId 店铺ID
+     * @return 指定店铺的所有商品信息
+     */
+    List<ShoppingCartResponseModel> selectShoppingCartDataByUserIdAndShopId(@Param("userId") long userId,
+                                                                  @Param("shopId") long shopId);
 }

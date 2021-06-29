@@ -1,9 +1,14 @@
 package com.catmmao.wechatshop.controller;
 
+import java.util.Optional;
+
 import com.catmmao.wechatshop.model.response.PaginationResponseModel;
 import com.catmmao.wechatshop.model.response.ShoppingCartResponseModel;
 import com.catmmao.wechatshop.service.ShoppingCartService;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
@@ -15,6 +20,18 @@ public class ShoppingCartController {
 
     public ShoppingCartController(ShoppingCartService shoppingCartService) {
         this.shoppingCartService = shoppingCartService;
+    }
+
+    /**
+     * 加购物车
+     * @param goodsList 需要添加的商品列表
+     * @return 已添加进购物车的该店铺的商品列表
+     */
+    @PostMapping
+    public ResponseEntity<ShoppingCartResponseModel> addGoodsToShoppingCart(
+        @RequestBody ShoppingCartResponseModel goodsList) {
+        ShoppingCartResponseModel responseBody = shoppingCartService.addGoodsToShoppingCart(goodsList);
+        return ResponseEntity.of(Optional.of(responseBody));
     }
 
     /**

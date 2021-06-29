@@ -1,21 +1,107 @@
 package com.catmmao.wechatshop.service;
 
 import java.util.List;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 import com.catmmao.wechatshop.UserContext;
+import com.catmmao.wechatshop.dao.mapper.GoodsMapper;
+import com.catmmao.wechatshop.dao.mapper.ShoppingCartMapper;
 import com.catmmao.wechatshop.dao.mapper.ShoppingCartQueryMapper;
+import com.catmmao.wechatshop.exception.HttpException;
+import com.catmmao.wechatshop.model.generated.Goods;
+import com.catmmao.wechatshop.model.generated.GoodsExample;
+import com.catmmao.wechatshop.model.generated.ShoppingCart;
 import com.catmmao.wechatshop.model.response.PaginationResponseModel;
 import com.catmmao.wechatshop.model.response.ShoppingCartGoodsModel;
 import com.catmmao.wechatshop.model.response.ShoppingCartResponseModel;
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import org.apache.ibatis.session.ExecutorType;
+import org.apache.ibatis.session.SqlSession;
+import org.apache.ibatis.session.SqlSessionFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 
 @Service
 public class ShoppingCartService {
+    private final SqlSessionFactory sqlSessionFactory;
+    private final Logger logger = LoggerFactory.getLogger(ShoppingCartService.class);
+    private final GoodsMapper goodsMapper;
     private final ShoppingCartQueryMapper shoppingCartQueryMapper;
 
-    public ShoppingCartService(ShoppingCartQueryMapper shoppingCartQueryMapper) {
+    public ShoppingCartService(SqlSessionFactory sqlSessionFactory, GoodsMapper goodsMapper,
+                               ShoppingCartQueryMapper shoppingCartQueryMapper) {
+        this.sqlSessionFactory = sqlSessionFactory;
+        this.goodsMapper = goodsMapper;
         this.shoppingCartQueryMapper = shoppingCartQueryMapper;
+    }
+
+    /**
+     * 添加商品到购物车
+     *
+     * @param goodsList 需要添加的商品列表
+     * @return 已添加进购物车的该店铺的商品列表
+     */
+    public ShoppingCartResponseModel addGoodsToShoppingCart(ShoppingCartResponseModel goodsList) {
+        List<ShoppingCartGoodsModel> goodsListOnlyHaveGoodsIdAndNumberParam = goodsList.getGoods();
+
+        List<Long> goodsIdList = goodsListOnlyHaveGoodsIdAndNumberParam
+            .stream()
+            .map(Goods::getId)
+            .collect(Collectors.toList());
+
+        if (goodsIdList.size() != goodsListOnlyHaveGoodsIdAndNumberParam.size()) {
+            throw HttpException.badRequest("所有商品都需要传入商品ID");
+        }
+
+        // 根据所有的商品 id 从数据库获取商品信息
+        GoodsExample goodsExample = new GoodsExample();
+        goodsExample.createCriteria().andIdIn(goodsIdList);
+        List<Goods> goodsListInDb = goodsMapper.selectByExample(goodsExample);
+
+        // 查看前端传入的所有的商品ID是否都能在数据库中查到
+        if (goodsListInDb.size() != goodsIdList.size()) {
+            String goodsListInDbToString = objectToReadableString(goodsListInDb);
+            logger.debug("商品ID不存在在数据库中！商品ID列表：{}；可查到的商品列表：{}", goodsIdList, goodsListInDbToString);
+            throw HttpException.badRequest("商品ID不存在在数据库中！可查到的商品有" + goodsListInDbToString);
+        }
+
+        // 检查所有商品的店铺ID是否是同一个
+        Set<Long> shopIdList = goodsListInDb.stream().map(Goods::getShopId).collect(Collectors.toSet());
+        if (shopIdList.size() != 1) {
+            String goodsListInDbToString = objectToReadableString(goodsListInDb);
+            logger.debug("商品不属于同一店铺！商品ID列表：{}；商品列表：{}", goodsIdList, goodsListInDbToString);
+            throw HttpException.badRequest("商品必须属于同一店铺");
+        }
+
+        // 将商品信息转化成购物车表的结构(这里可以让前端把商品的其他信息传进来吗，这样就不用自己合并了)
+        long shopId = shopIdList.iterator().next();
+        long userId = UserContext.getCurrentUser().getId();
+        List<ShoppingCart> shoppingCartRows = goodsListOnlyHaveGoodsIdAndNumberParam
+            .stream()
+            .map(goods -> {
+                long goodsId = goods.getId();
+                ShoppingCart newGoods = new ShoppingCart();
+                newGoods.setGoodsId(goodsId);
+                newGoods.setNumber(goods.getNumber());
+                newGoods.setShopId(shopId);
+                newGoods.setUserId(userId);
+
+                return newGoods;
+            })
+            .collect(Collectors.toList());
+
+        // 添加到数据库的购物车表单中（使用 jdbc batch 方式）
+        try (SqlSession sqlSession = sqlSessionFactory.openSession(ExecutorType.BATCH)) {
+            ShoppingCartMapper mapper = sqlSession.getMapper(ShoppingCartMapper.class);
+            shoppingCartRows.forEach(mapper::insertSelective);
+            sqlSession.commit();
+        }
+
+        return mergeMultiGoodsListFromSameShopToSingleMap(
+            shoppingCartQueryMapper.selectShoppingCartDataByUserIdAndShopId(userId, shopId));
     }
 
     /**
@@ -72,7 +158,8 @@ public class ShoppingCartService {
      * @param sameShopList 店铺ID相同的购物车列表
      * @return 合并后的购物车列表
      */
-    public ShoppingCartResponseModel mergeMultiGoodsListFromSameShopToSingleMap(List<ShoppingCartResponseModel> sameShopList) {
+    public ShoppingCartResponseModel mergeMultiGoodsListFromSameShopToSingleMap(
+        List<ShoppingCartResponseModel> sameShopList) {
         List<ShoppingCartGoodsModel> goodsList = sameShopList
             .stream()
             .map(ShoppingCartResponseModel::getGoods)
@@ -83,6 +170,26 @@ public class ShoppingCartService {
         ShoppingCartResponseModel result = new ShoppingCartResponseModel();
         result.setShop(sameShopList.get(0).getShop());
         result.setGoods(goodsList);
+        return result;
+    }
+
+    /**
+     * 将对象转为可读的字符串
+     *
+     * @param object 待转换的对象
+     * @return 字符串
+     */
+    public String objectToReadableString(Object object) {
+        String result = null;
+        try {
+            result = new ObjectMapper()
+                .writer()
+                .withDefaultPrettyPrinter()
+                .writeValueAsString(object);
+        } catch (JsonProcessingException e) {
+            e.printStackTrace();
+        }
+
         return result;
     }
 }
