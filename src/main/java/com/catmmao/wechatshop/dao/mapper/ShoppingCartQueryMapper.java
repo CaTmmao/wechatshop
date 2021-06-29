@@ -17,14 +17,14 @@ public interface ShoppingCartQueryMapper {
     int countHowManyShopsInUserShoppingCart(long userId);
 
     /**
-     * 获取用户购物车信息
+     * 获取用户购物车中的所有商品信息列表
      *
      * @param userId 用户ID
      * @param offset offset
      * @param limit  limit
      * @return 购物车信息
      */
-    List<ShoppingCartResponseModel> selectShoppingCartDataByUserId(@Param("userId") long userId,
+    List<ShoppingCartResponseModel> selectShoppingCartDataListByUserId(@Param("userId") long userId,
                                                                    @Param("offset") int offset,
                                                                    @Param("limit") int limit);
 }

@@ -33,12 +33,12 @@ public class ShoppingCartService {
         int totalPage = totalNumber % pageSize == 0 ? totalNumber / pageSize : totalNumber / pageSize + 1;
 
         List<ShoppingCartResponseModel> data = shoppingCartQueryMapper
-            .selectShoppingCartDataByUserId(userId, offset, pageSize)
+            .selectShoppingCartDataListByUserId(userId, offset, pageSize)
             .stream()
             .collect(Collectors.groupingBy(item -> item.getShop().getId()))
             .values()
             .stream()
-            .map(this::mergeGoodsList)
+            .map(this::mergeMultiGoodsListFromSameShopToSingleMap)
             .collect(Collectors.toList());
 
         return new PaginationResponseModel<>(pageSize, pageNum, totalPage, data);
@@ -72,7 +72,7 @@ public class ShoppingCartService {
      * @param sameShopList 店铺ID相同的购物车列表
      * @return 合并后的购物车列表
      */
-    public ShoppingCartResponseModel mergeGoodsList(List<ShoppingCartResponseModel> sameShopList) {
+    public ShoppingCartResponseModel mergeMultiGoodsListFromSameShopToSingleMap(List<ShoppingCartResponseModel> sameShopList) {
         List<ShoppingCartGoodsModel> goodsList = sameShopList
             .stream()
             .map(ShoppingCartResponseModel::getGoods)
