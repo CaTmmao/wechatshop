@@ -7,7 +7,9 @@ import com.catmmao.wechatshop.model.response.PaginationResponseModel;
 import com.catmmao.wechatshop.model.response.ShoppingCartResponseModel;
 import com.catmmao.wechatshop.service.ShoppingCartService;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -32,6 +34,19 @@ public class ShoppingCartController {
     public ResponseEntity<CommonResponseModel<ShoppingCartResponseModel>> addGoodsToShoppingCart(
         @RequestBody ShoppingCartResponseModel goodsList) {
         ShoppingCartResponseModel data = shoppingCartService.addGoodsToShoppingCart(goodsList);
+        return ResponseEntity.of(Optional.of(CommonResponseModel.of(data)));
+    }
+
+    /**
+     * 删除当前用户购物车中指定的商品
+     *
+     * @param goodsId 要删除的商品ID
+     * @return 更新后的该店铺物品列表
+     */
+    @DeleteMapping("/{goodsId}")
+    public ResponseEntity<CommonResponseModel<ShoppingCartResponseModel>> deleteGoodsInShoppingCart(
+        @PathVariable long goodsId) {
+        ShoppingCartResponseModel data = shoppingCartService.deleteGoodsInShoppingCart(goodsId);
         return ResponseEntity.of(Optional.of(CommonResponseModel.of(data)));
     }
 

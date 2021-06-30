@@ -9,9 +9,11 @@ import com.catmmao.wechatshop.dao.mapper.GoodsMapper;
 import com.catmmao.wechatshop.dao.mapper.ShoppingCartMapper;
 import com.catmmao.wechatshop.dao.mapper.ShoppingCartQueryMapper;
 import com.catmmao.wechatshop.exception.HttpException;
+import com.catmmao.wechatshop.model.DbDataStatus;
 import com.catmmao.wechatshop.model.generated.Goods;
 import com.catmmao.wechatshop.model.generated.GoodsExample;
 import com.catmmao.wechatshop.model.generated.ShoppingCart;
+import com.catmmao.wechatshop.model.generated.ShoppingCartExample;
 import com.catmmao.wechatshop.model.response.PaginationResponseModel;
 import com.catmmao.wechatshop.model.response.ShoppingCartGoodsModel;
 import com.catmmao.wechatshop.model.response.ShoppingCartResponseModel;
@@ -30,12 +32,44 @@ public class ShoppingCartService {
     private final Logger logger = LoggerFactory.getLogger(ShoppingCartService.class);
     private final GoodsMapper goodsMapper;
     private final ShoppingCartQueryMapper shoppingCartQueryMapper;
+    private final ShoppingCartMapper shoppingCartMapper;
 
     public ShoppingCartService(SqlSessionFactory sqlSessionFactory, GoodsMapper goodsMapper,
-                               ShoppingCartQueryMapper shoppingCartQueryMapper) {
+                               ShoppingCartQueryMapper shoppingCartQueryMapper,
+                               ShoppingCartMapper shoppingCartMapper) {
         this.sqlSessionFactory = sqlSessionFactory;
         this.goodsMapper = goodsMapper;
         this.shoppingCartQueryMapper = shoppingCartQueryMapper;
+        this.shoppingCartMapper = shoppingCartMapper;
+    }
+
+    /**
+     * 删除当前用户购物车中指定的商品
+     *
+     * @param goodsId 要删除的商品ID
+     * @return 更新后的该店铺物品列表
+     */
+    public ShoppingCartResponseModel deleteGoodsInShoppingCart(long goodsId) {
+        long userId = UserContext.getCurrentUser().getId();
+
+        // 从数据库获取该商品
+        ShoppingCartExample example = new ShoppingCartExample();
+        example.createCriteria().andUserIdEqualTo(userId).andGoodsIdEqualTo(goodsId);
+        List<ShoppingCart> selectedDataFromDb = shoppingCartMapper.selectByExample(example);
+        if (selectedDataFromDb.isEmpty()) {
+            throw HttpException.resourceNotFound("找不到该商品");
+        }
+
+        // 在数据库将该商品的 status 更新为 'delete'
+        ShoppingCart updateData = selectedDataFromDb.get(0);
+        updateData.setStatus(DbDataStatus.DELETE.getName());
+        shoppingCartMapper.updateByPrimaryKeySelective(updateData);
+
+        // 从数据库获取该店铺已加入购物车的商品
+        long shopId = updateData.getShopId();
+        List<ShoppingCartResponseModel> shoppingCartList =
+            shoppingCartQueryMapper.selectShoppingCartDataByUserIdAndShopId(userId, shopId);
+        return shoppingCartList.isEmpty() ? null : mergeMultiGoodsListFromSameShopToSingleMap(shoppingCartList);
     }
 
     /**
