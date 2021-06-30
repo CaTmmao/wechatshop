@@ -63,10 +63,8 @@ public class ShoppingCartService {
         shoppingCartQueryMapper.deleteShoppingCartByUserIdAndGoodsId(userId, goodsId);
 
         // 从数据库获取该店铺已加入购物车的商品
-        long shopId = updateData.getShopId();
-        List<ShoppingCartResponseModel> shoppingCartList =
-            shoppingCartQueryMapper.selectShoppingCartDataByUserIdAndShopId(userId, shopId);
-        return shoppingCartList.isEmpty() ? null : mergeMultiGoodsListFromSameShopToSingleMap(shoppingCartList);
+        long shopId = selectedDataFromDb.get(0).getShopId();
+        return getShoppingCartByUserIdAndShopId(userId, shopId);
     }
 
     /**
@@ -131,8 +129,7 @@ public class ShoppingCartService {
             sqlSession.commit();
         }
 
-        return mergeMultiGoodsListFromSameShopToSingleMap(
-            shoppingCartQueryMapper.selectShoppingCartDataByUserIdAndShopId(userId, shopId));
+        return getShoppingCartByUserIdAndShopId(userId, shopId);
     }
 
     /**
@@ -202,6 +199,19 @@ public class ShoppingCartService {
         result.setShop(sameShopList.get(0).getShop());
         result.setGoods(goodsList);
         return result;
+    }
+
+    /**
+     * 获取购物车内指定店铺的商品列表，并将返回内容合并为一个对象
+     *
+     * @param userId 用户ID
+     * @param shopId 店铺ID
+     * @return 购物车内指定店铺的商品列表
+     */
+    public ShoppingCartResponseModel getShoppingCartByUserIdAndShopId(long userId, long shopId) {
+        List<ShoppingCartResponseModel> dataList =
+            shoppingCartQueryMapper.selectShoppingCartDataByUserIdAndShopId(userId, shopId);
+        return dataList.isEmpty() ? null : mergeMultiGoodsListFromSameShopToSingleMap(dataList);
     }
 
     /**
