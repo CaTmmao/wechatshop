@@ -5,9 +5,13 @@ import java.util.List;
 import com.catmmao.wechatshop.model.TelAndCode;
 import com.catmmao.wechatshop.model.generated.User;
 import com.catmmao.wechatshop.model.response.UserLoginResponseModel;
+import org.flywaydb.core.Flyway;
+import org.flywaydb.core.api.configuration.ClassicConfiguration;
 import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.test.web.client.TestRestTemplate;
 import org.springframework.boot.web.server.LocalServerPort;
 import org.springframework.core.ParameterizedTypeReference;
@@ -33,9 +37,25 @@ public class AbstractIntegrationTest {
 
     @LocalServerPort
     protected int port;
-
     @Autowired
     protected TestRestTemplate restTemplate;
+
+    @Value("${spring.datasource.url}")
+    private String databaseUrl;
+    @Value("${spring.datasource.username}")
+    private String databaseUsername;
+    @Value("${spring.datasource.password}")
+    private String databasePassword;
+
+    @BeforeEach
+    void initFlyway() {
+        // 在每个测试开始前，执行一次flyway:clean flyway:migrate
+        ClassicConfiguration conf = new ClassicConfiguration();
+        conf.setDataSource(databaseUrl, databaseUsername, databasePassword);
+        Flyway flyway = new Flyway(conf);
+        flyway.clean();
+        flyway.migrate();
+    }
 
     protected String getUrl(String api) {
         return "http://localhost:" + port + "/api/v1" + api;
