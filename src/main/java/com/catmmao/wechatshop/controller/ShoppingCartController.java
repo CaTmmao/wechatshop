@@ -2,6 +2,7 @@ package com.catmmao.wechatshop.controller;
 
 import java.util.Optional;
 
+import com.catmmao.wechatshop.model.response.CommonResponseModel;
 import com.catmmao.wechatshop.model.response.PaginationResponseModel;
 import com.catmmao.wechatshop.model.response.ShoppingCartResponseModel;
 import com.catmmao.wechatshop.service.ShoppingCartService;
@@ -28,10 +29,10 @@ public class ShoppingCartController {
      * @return 已添加进购物车的该店铺的商品列表
      */
     @PostMapping
-    public ResponseEntity<ShoppingCartResponseModel> addGoodsToShoppingCart(
+    public ResponseEntity<CommonResponseModel<ShoppingCartResponseModel>> addGoodsToShoppingCart(
         @RequestBody ShoppingCartResponseModel goodsList) {
-        ShoppingCartResponseModel responseBody = shoppingCartService.addGoodsToShoppingCart(goodsList);
-        return ResponseEntity.of(Optional.of(responseBody));
+        ShoppingCartResponseModel data = shoppingCartService.addGoodsToShoppingCart(goodsList);
+        return ResponseEntity.of(Optional.of(CommonResponseModel.of(data)));
     }
 
     /**
