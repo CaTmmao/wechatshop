@@ -82,4 +82,10 @@
             <result property="updatedAt" column="goods_updatedAt"/>
         </collection>
     </resultMap>
+
+    <delete id="deleteShoppingCartByUserIdAndGoodsId" parameterType="map">
+        update shopping_cart
+        set STATUS = 'delete'
+        where USER_ID = #{userId} and GOODS_ID = #{goodsId} and STATUS = 'ok'
+    </delete>
 </mapper>

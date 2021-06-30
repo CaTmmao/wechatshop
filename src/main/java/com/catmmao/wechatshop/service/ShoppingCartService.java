@@ -9,7 +9,6 @@ import com.catmmao.wechatshop.dao.mapper.GoodsMapper;
 import com.catmmao.wechatshop.dao.mapper.ShoppingCartMapper;
 import com.catmmao.wechatshop.dao.mapper.ShoppingCartQueryMapper;
 import com.catmmao.wechatshop.exception.HttpException;
-import com.catmmao.wechatshop.model.DbDataStatus;
 import com.catmmao.wechatshop.model.generated.Goods;
 import com.catmmao.wechatshop.model.generated.GoodsExample;
 import com.catmmao.wechatshop.model.generated.ShoppingCart;
@@ -61,9 +60,7 @@ public class ShoppingCartService {
         }
 
         // 在数据库将该商品的 status 更新为 'delete'
-        ShoppingCart updateData = selectedDataFromDb.get(0);
-        updateData.setStatus(DbDataStatus.DELETE.getName());
-        shoppingCartMapper.updateByPrimaryKeySelective(updateData);
+        shoppingCartQueryMapper.deleteShoppingCartByUserIdAndGoodsId(userId, goodsId);
 
         // 从数据库获取该店铺已加入购物车的商品
         long shopId = updateData.getShopId();

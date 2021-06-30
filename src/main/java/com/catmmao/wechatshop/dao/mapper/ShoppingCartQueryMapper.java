@@ -25,8 +25,8 @@ public interface ShoppingCartQueryMapper {
      * @return 购物车信息
      */
     List<ShoppingCartResponseModel> selectShoppingCartDataListByUserId(@Param("userId") long userId,
-                                                                   @Param("offset") int offset,
-                                                                   @Param("limit") int limit);
+                                                                       @Param("offset") int offset,
+                                                                       @Param("limit") int limit);
 
     /**
      * 获取当前用户购物车中特定店铺的商品信息
@@ -36,5 +36,14 @@ public interface ShoppingCartQueryMapper {
      * @return 指定店铺的所有商品信息
      */
     List<ShoppingCartResponseModel> selectShoppingCartDataByUserIdAndShopId(@Param("userId") long userId,
-                                                                  @Param("shopId") long shopId);
+                                                                            @Param("shopId") long shopId);
+
+    /**
+     * 删除购物车表中指定商品ID的数据
+     *
+     * @param userId  用户ID
+     * @param goodsId 商品ID
+     */
+    void deleteShoppingCartByUserIdAndGoodsId(@Param("userId") long userId,
+                            @Param("goodsId") long goodsId);
 }
