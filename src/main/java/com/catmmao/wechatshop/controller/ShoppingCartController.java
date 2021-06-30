@@ -27,6 +27,7 @@ public class ShoppingCartController {
 
     /**
      * 加购物车
+     *
      * @param goodsList 需要添加的商品列表
      * @return 已添加进购物车的该店铺的商品列表
      */
