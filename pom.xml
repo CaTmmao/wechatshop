@@ -21,4 +21,38 @@
         <module>wechatshop-api</module>
         <module>wechatshop-order</module>
     </modules>
+
+    <properties>
+        <java.version>1.8</java.version>
+        <dubbo.version>2.7.10</dubbo.version>
+    </properties>
+
+    <!--
+    dependencyManagement 标签的作用不是让子 pom 自动继承这些依赖，而是让子 pom 在自己的文件中声明这些
+    依赖时不用添加版本号，在父 pom 中统一控制这些依赖的版本
+    -->
+    <dependencyManagement>
+        <dependencies>
+            <dependency>
+                <groupId>org.apache.dubbo</groupId>
+                <artifactId>dubbo-spring-boot-starter</artifactId>
+                <version>${dubbo.version}</version>
+            </dependency>
+
+            <!-- Zookeeper dependencies -->
+            <dependency>
+                <groupId>org.apache.dubbo</groupId>
+                <artifactId>dubbo-dependencies-zookeeper</artifactId>
+                <version>${dubbo.version}</version>
+                <!--继承的方式，默认是 jar-->
+                <type>pom</type>
+                <exclusions>
+                    <exclusion>
+                        <groupId>org.slf4j</groupId>
+                        <artifactId>slf4j-log4j12</artifactId>
+                    </exclusion>
+                </exclusions>
+            </dependency>
+        </dependencies>
+    </dependencyManagement>
 </project>
