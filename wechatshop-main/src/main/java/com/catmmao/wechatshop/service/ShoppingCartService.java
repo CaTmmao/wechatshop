@@ -14,7 +14,7 @@ import com.catmmao.wechatshop.model.generated.GoodsExample;
 import com.catmmao.wechatshop.model.generated.ShoppingCart;
 import com.catmmao.wechatshop.model.generated.ShoppingCartExample;
 import com.catmmao.wechatshop.model.response.PaginationResponseModel;
-import com.catmmao.wechatshop.model.response.ShoppingCartGoodsModel;
+import com.catmmao.wechatshop.model.GoodsWithNumber;
 import com.catmmao.wechatshop.model.response.ShoppingCartResponseModel;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -74,7 +74,7 @@ public class ShoppingCartService {
      * @return 已添加进购物车的该店铺的商品列表
      */
     public ShoppingCartResponseModel addGoodsToShoppingCart(ShoppingCartResponseModel goodsList) {
-        List<ShoppingCartGoodsModel> goodsListOnlyHaveGoodsIdAndNumberParam = goodsList.getGoods();
+        List<GoodsWithNumber> goodsListOnlyHaveGoodsIdAndNumberParam = goodsList.getGoods();
 
         List<Long> goodsIdList = goodsListOnlyHaveGoodsIdAndNumberParam
             .stream()
@@ -188,7 +188,7 @@ public class ShoppingCartService {
      */
     public ShoppingCartResponseModel mergeMultiGoodsListFromSameShopToSingleMap(
         List<ShoppingCartResponseModel> sameShopList) {
-        List<ShoppingCartGoodsModel> goodsList = sameShopList
+        List<GoodsWithNumber> goodsList = sameShopList
             .stream()
             .map(ShoppingCartResponseModel::getGoods)
             // [{"id": 12345...}] 转为 {"id": 12345...}

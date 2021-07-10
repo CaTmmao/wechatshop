@@ -1,8 +1,8 @@
-package com.catmmao.wechatshop.model.response;
+package com.catmmao.wechatshop.model;
 
 import com.catmmao.wechatshop.model.generated.Goods;
 
-public class ShoppingCartGoodsModel extends Goods {
+public class GoodsWithNumber extends Goods {
     // 商品数量
     private int number;
 

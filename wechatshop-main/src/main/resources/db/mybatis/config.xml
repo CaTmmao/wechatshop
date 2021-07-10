@@ -7,7 +7,7 @@
         <typeAlias alias="ShoppingCartResponseModel"
                    type="com.catmmao.wechatshop.model.response.ShoppingCartResponseModel"/>
         <typeAlias alias="Shop" type="com.catmmao.wechatshop.model.generated.Shop"/>
-        <typeAlias alias="ShoppingCartGoods" type="com.catmmao.wechatshop.model.response.ShoppingCartGoodsModel"/>
+        <typeAlias alias="GoodsWithNumber" type="com.catmmao.wechatshop.model.GoodsWithNumber"/>
     </typeAliases>
     <mappers>
         <mapper resource="db/mybatis/mapper/UserMapper.xml"/>

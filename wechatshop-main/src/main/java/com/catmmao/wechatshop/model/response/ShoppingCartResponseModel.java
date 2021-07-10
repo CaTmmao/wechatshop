@@ -2,6 +2,7 @@ package com.catmmao.wechatshop.model.response;
 
 import java.util.List;
 
+import com.catmmao.wechatshop.model.GoodsWithNumber;
 import com.catmmao.wechatshop.model.generated.Shop;
 
 /**
@@ -11,7 +12,7 @@ public class ShoppingCartResponseModel {
     // 店铺信息
     private Shop shop;
     // 商品列表信息
-    private List<ShoppingCartGoodsModel> goods;
+    private List<GoodsWithNumber> goods;
 
     public Shop getShop() {
         return shop;
@@ -21,15 +22,15 @@ public class ShoppingCartResponseModel {
         this.shop = shop;
     }
 
-    public List<ShoppingCartGoodsModel> getGoods() {
+    public List<GoodsWithNumber> getGoods() {
         return goods;
     }
 
-    public void setGoods(List<ShoppingCartGoodsModel> goods) {
+    public void setGoods(List<GoodsWithNumber> goods) {
         this.goods = goods;
     }
 
-    public void putGoods(ShoppingCartGoodsModel goods) {
+    public void putGoods(GoodsWithNumber goods) {
         this.goods.add(goods);
     }
 }

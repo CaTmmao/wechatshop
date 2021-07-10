@@ -70,7 +70,7 @@
             <result property="createdAt" column="shop_createdAt"/>
             <result property="updatedAt" column="shop_updatedAt"/>
         </association>
-        <collection property="goods" ofType="ShoppingCartGoods">
+        <collection property="goods" ofType="GoodsWithNumber">
             <id property="id" column="goods_id"/>
             <result property="name" column="goods_name"/>
             <result property="description" column="goods_description"/>

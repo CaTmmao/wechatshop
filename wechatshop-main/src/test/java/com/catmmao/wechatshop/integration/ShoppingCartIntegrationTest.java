@@ -11,7 +11,7 @@ import com.catmmao.wechatshop.WechatshopApplication;
 import com.catmmao.wechatshop.model.generated.Goods;
 import com.catmmao.wechatshop.model.response.CommonResponseModel;
 import com.catmmao.wechatshop.model.response.PaginationResponseModel;
-import com.catmmao.wechatshop.model.response.ShoppingCartGoodsModel;
+import com.catmmao.wechatshop.model.GoodsWithNumber;
 import com.catmmao.wechatshop.model.response.ShoppingCartResponseModel;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -67,7 +67,7 @@ class ShoppingCartIntegrationTest extends AbstractIntegrationTest {
                      data.get(0)
                          .getGoods()
                          .stream()
-                         .map(ShoppingCartGoodsModel::getNumber)
+                         .map(GoodsWithNumber::getNumber)
                          .collect(Collectors.toList()));
     }
 
@@ -77,7 +77,7 @@ class ShoppingCartIntegrationTest extends AbstractIntegrationTest {
         afterLoginReturnSessionIdAndUserInfo();
 
         // 2.添加商品到购物车
-        ShoppingCartGoodsModel goods = new ShoppingCartGoodsModel();
+        GoodsWithNumber goods = new GoodsWithNumber();
         goods.setId(1L);
         goods.setNumber(100);
 
