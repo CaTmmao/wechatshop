@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--mybatis generator 配置文件-->
+<!DOCTYPE generatorConfiguration
+        PUBLIC "-//mybatis.org//DTD MyBatis Generator Configuration 1.0//EN"
+        "http://mybatis.org/dtd/mybatis-generator-config_1_0.dtd">
+
+<generatorConfiguration>
+    <context id="order" targetRuntime="MyBatis3">
+        <plugin type="com.qiukeke.mybatis.plugins.MySQLLimitPlugin"/>
+        <!--可使 mapper.java 文件直接被注入的插件-->
+        <plugin type="org.mybatis.generator.plugins.MapperAnnotationPlugin"/>
+        <!--所有生成的类实现 Serializable 类-->
+        <plugin type="org.mybatis.generator.plugins.SerializablePlugin"/>
+
+        <!--        配置数据库连接-->
+        <jdbcConnection driverClass="com.mysql.cj.jdbc.Driver"
+                        connectionURL="jdbc:mysql://localhost:3306/order"
+                        userId="root"
+                        password="123456">
+            <property name="nullCatalogMeansCurrent" value="true"/>
+        </jdbcConnection>
+
+        <!--指定生成数据库表的模型的路径-->
+        <javaModelGenerator targetPackage="com.catmmao.wechatshop.api.generated"
+                            targetProject="src/main/java">
+        </javaModelGenerator>
+
+        <!--指定生成mapper.xml的路径-->
+        <sqlMapGenerator targetPackage="db.mybatis.mapper" targetProject="src/main/resources">
+        </sqlMapGenerator>
+
+        <!--指定生成mapper接口的的路径-->
+        <javaClientGenerator type="XMLMAPPER" targetPackage="com.catmmao.wechatshop.api.generated"
+                             targetProject="src/main/java">
+        </javaClientGenerator>
+
+        <table schema="order" tableName="order" domainObjectName="Order">
+            <generatedKey column="id" sqlStatement="MySql" identity="true"/>
+        </table>
+        <table schema="order" tableName="order_goods" domainObjectName="OrderGoods">
+            <generatedKey column="id" sqlStatement="MySql" identity="true"/>
+        </table>
+    </context>
+</generatorConfiguration>
