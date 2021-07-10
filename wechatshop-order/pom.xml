@@ -15,6 +15,13 @@
     <description>wechatshop-order</description>
 
     <dependencies>
+        <!--引入另一个 api 模块-->
+        <dependency>
+            <groupId>com.catmmao</groupId>
+            <artifactId>wechatshop-api</artifactId>
+            <version>0.0.1-SNAPSHOT</version>
+        </dependency>
+
         <dependency>
             <groupId>org.apache.dubbo</groupId>
             <artifactId>dubbo-spring-boot-starter</artifactId>
@@ -25,6 +32,11 @@
             <groupId>org.apache.dubbo</groupId>
             <artifactId>dubbo-dependencies-zookeeper</artifactId>
             <type>pom</type>
+        </dependency>
+
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-web</artifactId>
         </dependency>
     </dependencies>
 </project>

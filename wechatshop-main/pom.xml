@@ -14,6 +14,11 @@
     <name>wechatshop-main</name>
     <description>wechatshop-main</description>
     <dependencies>
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-web</artifactId>
+        </dependency>
+
         <!--引入另一个 api 模块-->
         <dependency>
             <groupId>com.catmmao</groupId>
