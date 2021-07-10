@@ -6,7 +6,7 @@ CREATE TABLE `order`
     ADDRESS         VARCHAR(1024),
     EXPRESS_COMPANY VARCHAR(16),
     EXPRESS_ID      VARCHAR(128),
-    STATUS          VARCHAR(16), -- pending 待付款 paid 已付款 delivered 物流中 received 已收货
+    STATUS          VARCHAR(16) DEFAULT 'pending', -- pending 待付款 paid 已付款 delivered 物流中 received 已收货
     CREATED_AT      TIMESTAMP NOT NULL DEFAULT NOW(),
     UPDATED_AT      TIMESTAMP ON UPDATE NOW()
 ) ENGINE = InnoDB
