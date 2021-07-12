@@ -37,7 +37,7 @@
         <table schema="order" tableName="order" domainObjectName="Order">
             <generatedKey column="id" sqlStatement="MySql" identity="true"/>
         </table>
-        <table schema="order" tableName="order_id_goods_mapping" domainObjectName="OrderIdGoodsMapping">
+        <table schema="order" tableName="order_goods_mapping" domainObjectName="OrderGoodsMapping">
             <generatedKey column="id" sqlStatement="MySql" identity="true"/>
         </table>
     </context>

@@ -1,4 +1,4 @@
-CREATE TABLE order_id_goods_mapping
+CREATE TABLE order_goods_mapping
 (
     ID         BIGINT PRIMARY KEY AUTO_INCREMENT,
     GOODS_ID   BIGINT,
@@ -10,6 +10,6 @@ CREATE TABLE order_id_goods_mapping
   DEFAULT CHARSET = utf8mb4
   COLLATE = utf8mb4_unicode_ci;
 
-INSERT INTO order_id_goods_mapping(ID, GOODS_ID, ORDER_ID, NUMBER)
+INSERT INTO order_goods_mapping(ID, GOODS_ID, ORDER_ID, NUMBER)
 VALUES (1, 1, 1, 5),
        (2, 2, 1, 9);
