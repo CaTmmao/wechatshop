@@ -154,4 +154,16 @@ public class GoodsService {
             throw HttpException.forbidden("店铺不属于该用户");
         }
     }
+
+    /**
+     * 根据商品ID数组获取商品列表
+     *
+     * @param goodsIdList 商品ID数组
+     * @return 商品列表
+     */
+    public List<Goods> getGoodsListByGoodsIdList(List<Long> goodsIdList) {
+        GoodsExample goodsExample = new GoodsExample();
+        goodsExample.createCriteria().andIdIn(goodsIdList);
+        return goodsMapper.selectByExample(goodsExample);
+    }
 }

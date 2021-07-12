@@ -9,12 +9,11 @@ import com.catmmao.wechatshop.dao.mapper.GoodsMapper;
 import com.catmmao.wechatshop.dao.mapper.ShoppingCartMapper;
 import com.catmmao.wechatshop.dao.mapper.ShoppingCartQueryMapper;
 import com.catmmao.wechatshop.exception.HttpException;
+import com.catmmao.wechatshop.model.GoodsWithNumber;
 import com.catmmao.wechatshop.model.generated.Goods;
-import com.catmmao.wechatshop.model.generated.GoodsExample;
 import com.catmmao.wechatshop.model.generated.ShoppingCart;
 import com.catmmao.wechatshop.model.generated.ShoppingCartExample;
 import com.catmmao.wechatshop.model.response.PaginationResponseModel;
-import com.catmmao.wechatshop.model.GoodsWithNumber;
 import com.catmmao.wechatshop.model.response.ShoppingCartResponseModel;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -29,15 +28,16 @@ import org.springframework.stereotype.Service;
 public class ShoppingCartService {
     private final SqlSessionFactory sqlSessionFactory;
     private final Logger logger = LoggerFactory.getLogger(ShoppingCartService.class);
-    private final GoodsMapper goodsMapper;
+    private final GoodsService goodsService;
     private final ShoppingCartQueryMapper shoppingCartQueryMapper;
     private final ShoppingCartMapper shoppingCartMapper;
 
     public ShoppingCartService(SqlSessionFactory sqlSessionFactory, GoodsMapper goodsMapper,
+                               GoodsService goodsService,
                                ShoppingCartQueryMapper shoppingCartQueryMapper,
                                ShoppingCartMapper shoppingCartMapper) {
         this.sqlSessionFactory = sqlSessionFactory;
-        this.goodsMapper = goodsMapper;
+        this.goodsService = goodsService;
         this.shoppingCartQueryMapper = shoppingCartQueryMapper;
         this.shoppingCartMapper = shoppingCartMapper;
     }
@@ -85,10 +85,8 @@ public class ShoppingCartService {
             throw HttpException.badRequest("所有商品都需要传入商品ID");
         }
 
-        // 根据所有的商品 id 从数据库获取商品信息
-        GoodsExample goodsExample = new GoodsExample();
-        goodsExample.createCriteria().andIdIn(goodsIdList);
-        List<Goods> goodsListInDb = goodsMapper.selectByExample(goodsExample);
+        // 根据所有商品的 id 从数据库获取商品信息
+        List<Goods> goodsListInDb = goodsService.getGoodsListByGoodsIdList(goodsIdList);
 
         // 查看前端传入的所有的商品ID是否都能在数据库中查到
         if (goodsListInDb.size() != goodsIdList.size()) {
