@@ -178,7 +178,7 @@
                 <configuration>
                     <user>root</user>
                     <password>123456</password>
-                    <url>jdbc:mysql://localhost:3306/wechatshop</url>
+                    <url>jdbc:mysql://localhost:3306/main</url>
                 </configuration>
             </plugin>
             <plugin>

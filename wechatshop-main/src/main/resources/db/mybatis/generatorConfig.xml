@@ -5,14 +5,14 @@
         "http://mybatis.org/dtd/mybatis-generator-config_1_0.dtd">
 
 <generatorConfiguration>
-    <context id="wechatshop" targetRuntime="MyBatis3">
+    <context id="main" targetRuntime="MyBatis3">
         <plugin type="com.qiukeke.mybatis.plugins.MySQLLimitPlugin"/>
         <!--可使 mapper.java 文件直接被注入的插件-->
         <plugin type="org.mybatis.generator.plugins.MapperAnnotationPlugin"/>
 
         <!--        配置数据库连接-->
         <jdbcConnection driverClass="com.mysql.cj.jdbc.Driver"
-                        connectionURL="jdbc:mysql://localhost:3306/wechatshop"
+                        connectionURL="jdbc:mysql://localhost:3306/main"
                         userId="root"
                         password="123456">
             <property name="nullCatalogMeansCurrent" value="true"/>

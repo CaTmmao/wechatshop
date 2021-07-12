@@ -2,7 +2,7 @@ spring:
   application:
     name: wechatshop
   datasource:
-    url: jdbc:mysql://localhost:3306/wechatshop
+    url: jdbc:mysql://localhost:3306/main
     password: 123456
     driver-class-name: com.mysql.cj.jdbc.Driver
     username: root
