@@ -12,8 +12,8 @@ import static org.mockito.Mockito.when;
 import java.util.List;
 
 import com.catmmao.wechatshop.UserContext;
-import com.catmmao.wechatshop.dao.mapper.GoodsMapper;
-import com.catmmao.wechatshop.dao.mapper.ShopMapper;
+import com.catmmao.wechatshop.dao.mapper.generated.GoodsMapper;
+import com.catmmao.wechatshop.dao.mapper.generated.ShopMapper;
 import com.catmmao.wechatshop.exception.HttpException;
 import com.catmmao.wechatshop.model.DbDataStatus;
 import com.catmmao.wechatshop.model.generated.Goods;

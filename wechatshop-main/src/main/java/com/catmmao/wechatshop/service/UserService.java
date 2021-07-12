@@ -4,7 +4,7 @@ import java.util.Date;
 import java.util.Optional;
 
 import com.catmmao.wechatshop.dao.UserDao;
-import com.catmmao.wechatshop.dao.mapper.UserMapper;
+import com.catmmao.wechatshop.dao.mapper.generated.UserMapper;
 import com.catmmao.wechatshop.model.generated.User;
 import org.springframework.dao.DuplicateKeyException;
 import org.springframework.stereotype.Service;

@@ -28,7 +28,7 @@
         </sqlMapGenerator>
 
         <!--指定生成mapper接口的的路径-->
-        <javaClientGenerator type="XMLMAPPER" targetPackage="com.catmmao.wechatshop.dao.mapper"
+        <javaClientGenerator type="XMLMAPPER" targetPackage="com.catmmao.wechatshop.dao.mapper.generated"
                              targetProject="wechatshop-main/src/main/java">
         </javaClientGenerator>
 

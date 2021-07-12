@@ -5,8 +5,8 @@ import java.util.Set;
 import java.util.stream.Collectors;
 
 import com.catmmao.wechatshop.UserContext;
-import com.catmmao.wechatshop.dao.mapper.GoodsMapper;
-import com.catmmao.wechatshop.dao.mapper.ShoppingCartMapper;
+import com.catmmao.wechatshop.dao.mapper.generated.GoodsMapper;
+import com.catmmao.wechatshop.dao.mapper.generated.ShoppingCartMapper;
 import com.catmmao.wechatshop.dao.mapper.ShoppingCartQueryMapper;
 import com.catmmao.wechatshop.exception.HttpException;
 import com.catmmao.wechatshop.model.GoodsWithNumber;
