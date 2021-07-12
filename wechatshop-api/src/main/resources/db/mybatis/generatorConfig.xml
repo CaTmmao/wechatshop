@@ -26,7 +26,7 @@
         </javaModelGenerator>
 
         <!--指定生成mapper.xml的路径-->
-        <sqlMapGenerator targetPackage="db.mybatis.mapper"
+        <sqlMapGenerator targetPackage="db.mybatis.mapper.generated"
                          targetProject="wechatshop-api/src/main/resources">
         </sqlMapGenerator>
 
