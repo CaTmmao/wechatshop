@@ -18,16 +18,18 @@
             <property name="nullCatalogMeansCurrent" value="true"/>
         </jdbcConnection>
 
-        <javaModelGenerator targetPackage="com.catmmao.wechatshop.model.generated" targetProject="src/main/java">
+        <javaModelGenerator targetPackage="com.catmmao.wechatshop.model.generated"
+                            targetProject="wechatshop-main/src/main/java">
         </javaModelGenerator>
 
         <!--指定生成mapper.xml的路径-->
-        <sqlMapGenerator targetPackage="db.mybatis.mapper" targetProject="src/main/resources">
+        <sqlMapGenerator targetPackage="db.mybatis.mapper.generated"
+                         targetProject="wechatshop-main/src/main/resources">
         </sqlMapGenerator>
 
         <!--指定生成mapper接口的的路径-->
         <javaClientGenerator type="XMLMAPPER" targetPackage="com.catmmao.wechatshop.dao.mapper"
-                             targetProject="src/main/java">
+                             targetProject="wechatshop-main/src/main/java">
         </javaClientGenerator>
 
         <table schema="wechatshop" tableName="user" domainObjectName="User">
