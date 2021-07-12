@@ -95,7 +95,7 @@ public class ShoppingCartService {
             throw HttpException.badRequest("商品ID不存在在数据库中！可查到的商品有" + goodsListInDbToString);
         }
 
-        // 检查所有商品的店铺ID是否是同一个
+        // 检查所有商品是否属于同一店铺
         Set<Long> shopIdList = goodsListInDb.stream().map(Goods::getShopId).collect(Collectors.toSet());
         if (shopIdList.size() != 1) {
             String goodsListInDbToString = objectToReadableString(goodsListInDb);
