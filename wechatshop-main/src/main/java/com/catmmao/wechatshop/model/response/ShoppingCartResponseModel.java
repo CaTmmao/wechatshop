@@ -3,7 +3,7 @@ package com.catmmao.wechatshop.model.response;
 import java.util.List;
 
 import com.catmmao.wechatshop.model.GoodsWithNumber;
-import com.catmmao.wechatshop.model.generated.Shop;
+import com.catmmao.wechatshop.generated.Shop;
 
 /**
  * 购物车接口的返回值模型

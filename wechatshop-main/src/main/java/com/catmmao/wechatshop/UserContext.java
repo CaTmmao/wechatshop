@@ -1,6 +1,6 @@
 package com.catmmao.wechatshop;
 
-import com.catmmao.wechatshop.model.generated.User;
+import com.catmmao.wechatshop.generated.User;
 
 /*
 存储用户具体信息

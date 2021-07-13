@@ -1,6 +1,6 @@
 package com.catmmao.wechatshop.model.response;
 
-import com.catmmao.wechatshop.model.generated.User;
+import com.catmmao.wechatshop.generated.User;
 
 public class UserLoginResponseModel {
     private Boolean isLogin;

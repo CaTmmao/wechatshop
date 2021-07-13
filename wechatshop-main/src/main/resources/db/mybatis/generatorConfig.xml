@@ -18,7 +18,7 @@
             <property name="nullCatalogMeansCurrent" value="true"/>
         </jdbcConnection>
 
-        <javaModelGenerator targetPackage="com.catmmao.wechatshop.model.generated"
+        <javaModelGenerator targetPackage="com.catmmao.wechatshop.generated"
                             targetProject="wechatshop-main/src/main/java">
         </javaModelGenerator>
 
@@ -28,7 +28,7 @@
         </sqlMapGenerator>
 
         <!--指定生成mapper接口的的路径-->
-        <javaClientGenerator type="XMLMAPPER" targetPackage="com.catmmao.wechatshop.dao.mapper.generated"
+        <javaClientGenerator type="XMLMAPPER" targetPackage="com.catmmao.wechatshop.generated"
                              targetProject="wechatshop-main/src/main/java">
         </javaClientGenerator>
 

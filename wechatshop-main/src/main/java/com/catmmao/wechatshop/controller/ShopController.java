@@ -2,7 +2,7 @@ package com.catmmao.wechatshop.controller;
 
 import java.util.Optional;
 
-import com.catmmao.wechatshop.model.generated.Shop;
+import com.catmmao.wechatshop.generated.Shop;
 import com.catmmao.wechatshop.model.response.CommonResponseModel;
 import com.catmmao.wechatshop.model.response.PaginationResponseModel;
 import com.catmmao.wechatshop.service.ShopService;

@@ -6,7 +6,7 @@
     <typeAliases>
         <typeAlias alias="ShoppingCartResponseModel"
                    type="com.catmmao.wechatshop.model.response.ShoppingCartResponseModel"/>
-        <typeAlias alias="Shop" type="com.catmmao.wechatshop.model.generated.Shop"/>
+        <typeAlias alias="Shop" type="com.catmmao.wechatshop.generated.Shop"/>
         <typeAlias alias="GoodsWithNumber" type="com.catmmao.wechatshop.model.GoodsWithNumber"/>
     </typeAliases>
     <mappers>

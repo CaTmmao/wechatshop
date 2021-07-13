@@ -4,7 +4,7 @@ import javax.servlet.http.HttpServletResponse;
 
 import com.catmmao.wechatshop.UserContext;
 import com.catmmao.wechatshop.model.TelAndCode;
-import com.catmmao.wechatshop.model.generated.User;
+import com.catmmao.wechatshop.generated.User;
 import com.catmmao.wechatshop.model.response.UserLoginResponseModel;
 import com.catmmao.wechatshop.service.AuthService;
 import com.catmmao.wechatshop.service.TelVerificationService;

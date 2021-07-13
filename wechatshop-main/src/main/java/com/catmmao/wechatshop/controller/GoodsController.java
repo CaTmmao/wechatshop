@@ -3,7 +3,7 @@ package com.catmmao.wechatshop.controller;
 import java.util.Optional;
 import javax.websocket.server.PathParam;
 
-import com.catmmao.wechatshop.model.generated.Goods;
+import com.catmmao.wechatshop.generated.Goods;
 import com.catmmao.wechatshop.model.response.CommonResponseModel;
 import com.catmmao.wechatshop.model.response.PaginationResponseModel;
 import com.catmmao.wechatshop.service.GoodsService;

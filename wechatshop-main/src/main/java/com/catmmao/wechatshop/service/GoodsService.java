@@ -3,13 +3,13 @@ package com.catmmao.wechatshop.service;
 import java.util.List;
 
 import com.catmmao.wechatshop.UserContext;
-import com.catmmao.wechatshop.dao.mapper.generated.GoodsMapper;
-import com.catmmao.wechatshop.dao.mapper.generated.ShopMapper;
+import com.catmmao.wechatshop.generated.GoodsMapper;
+import com.catmmao.wechatshop.generated.ShopMapper;
 import com.catmmao.wechatshop.exception.HttpException;
 import com.catmmao.wechatshop.model.DbDataStatus;
-import com.catmmao.wechatshop.model.generated.Goods;
-import com.catmmao.wechatshop.model.generated.GoodsExample;
-import com.catmmao.wechatshop.model.generated.Shop;
+import com.catmmao.wechatshop.generated.Goods;
+import com.catmmao.wechatshop.generated.GoodsExample;
+import com.catmmao.wechatshop.generated.Shop;
 import com.catmmao.wechatshop.model.response.PaginationResponseModel;
 import org.springframework.stereotype.Service;
 
