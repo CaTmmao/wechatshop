@@ -15,11 +15,20 @@
     <description>wechatshop-order</description>
 
     <dependencies>
-        <!--引入另一个 api 模块-->
+        <dependency>
+            <groupId>mysql</groupId>
+            <artifactId>mysql-connector-java</artifactId>
+            <scope>runtime</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>org.mybatis.spring.boot</groupId>
+            <artifactId>mybatis-spring-boot-starter</artifactId>
+        </dependency>
+
         <dependency>
             <groupId>com.catmmao</groupId>
             <artifactId>wechatshop-api</artifactId>
-            <version>0.0.1-SNAPSHOT</version>
         </dependency>
 
         <dependency>
@@ -39,4 +48,30 @@
             <artifactId>spring-boot-starter-web</artifactId>
         </dependency>
     </dependencies>
+
+    <build>
+        <plugins>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-checkstyle-plugin</artifactId>
+            </plugin>
+            <plugin>
+                <groupId>org.flywaydb</groupId>
+                <artifactId>flyway-maven-plugin</artifactId>
+                <version>7.9.1</version>
+                <configuration>
+                    <user>root</user>
+                    <password>123456</password>
+                    <url>jdbc:mysql://localhost:3306/order</url>
+                </configuration>
+            </plugin>
+            <plugin>
+                <groupId>org.mybatis.generator</groupId>
+                <artifactId>mybatis-generator-maven-plugin</artifactId>
+                <configuration>
+                    <configurationFile>../wechatshop-order/src/main/resources/db/mybatis/generatorConfig.xml</configurationFile>
+                </configuration>
+            </plugin>
+        </plugins>
+    </build>
 </project>

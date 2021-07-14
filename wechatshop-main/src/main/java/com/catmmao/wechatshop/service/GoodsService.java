@@ -1,7 +1,10 @@
 package com.catmmao.wechatshop.service;
 
 import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
 
+import com.catmmao.wechatshop.api.data.GoodsOnlyContainGoodsIdAndNumber;
 import com.catmmao.wechatshop.UserContext;
 import com.catmmao.wechatshop.generated.GoodsMapper;
 import com.catmmao.wechatshop.generated.ShopMapper;
@@ -12,6 +15,7 @@ import com.catmmao.wechatshop.generated.GoodsExample;
 import com.catmmao.wechatshop.generated.Shop;
 import com.catmmao.wechatshop.model.response.PaginationResponseModel;
 import org.springframework.stereotype.Service;
+import com.catmmao.wechatshop.model.GoodsWithNumber;
 
 @Service
 public class GoodsService {
@@ -165,5 +169,39 @@ public class GoodsService {
         GoodsExample goodsExample = new GoodsExample();
         goodsExample.createCriteria().andIdIn(goodsIdList);
         return goodsMapper.selectByExample(goodsExample);
+    }
+
+    /**
+     * 将 Goods 和数量合并到一起
+     *
+     * @param mapOfGoodsIdToGoodsInDb          map, 商品ID到商品信息的映射
+     * @param goodsOnlyContainGoodsIdAndNumber 只包括商品数量和商品ID
+     * @return 合并后的商品信息
+     */
+    public GoodsWithNumber combineGoodsAndNumber(Map<Long, Goods> mapOfGoodsIdToGoodsInDb,
+                                                 GoodsOnlyContainGoodsIdAndNumber goodsOnlyContainGoodsIdAndNumber) {
+        long goodsId = goodsOnlyContainGoodsIdAndNumber.getGoodsId();
+        int number = goodsOnlyContainGoodsIdAndNumber.getNumber();
+        GoodsWithNumber result = null;
+
+        Goods goodsInDb = mapOfGoodsIdToGoodsInDb.get(goodsId);
+        if (goodsInDb != null) {
+            result = new GoodsWithNumber(goodsInDb);
+            result.setNumber(number);
+        }
+
+        return result;
+    }
+
+    /**
+     * 将商品列表转换为通过商品ID映射到商品信息的 map
+     *
+     * @param goodsList 商品信息列表
+     * @return map，商品ID映射到商品信息
+     */
+    public Map<Long, Goods> generateMapOfGoodsIdToGoods(List<Goods> goodsList) {
+        return goodsList
+            .stream()
+            .collect(Collectors.toMap(Goods::getId, goods -> goods));
     }
 }

@@ -28,6 +28,10 @@ public class HttpException extends RuntimeException {
         return new HttpException(message, HttpStatus.FORBIDDEN);
     }
 
+    public static HttpException gone(String message) {
+        return new HttpException(message, HttpStatus.GONE);
+    }
+
     @Override
     public String getMessage() {
         return message;

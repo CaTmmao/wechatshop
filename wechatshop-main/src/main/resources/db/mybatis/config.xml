@@ -8,12 +8,14 @@
                    type="com.catmmao.wechatshop.model.response.ShoppingCartResponseModel"/>
         <typeAlias alias="Shop" type="com.catmmao.wechatshop.generated.Shop"/>
         <typeAlias alias="GoodsWithNumber" type="com.catmmao.wechatshop.model.GoodsWithNumber"/>
+        <typeAlias alias="GoodsOnlyContainGoodsIdAndNumber" type="com.catmmao.wechatshop.api.data.GoodsOnlyContainGoodsIdAndNumber"/>
     </typeAliases>
     <mappers>
-        <mapper resource="db/mybatis/mapper/UserMapper.xml"/>
-        <mapper resource="db/mybatis/mapper/GoodsMapper.xml"/>
-        <mapper resource="db/mybatis/mapper/ShopMapper.xml"/>
-        <mapper resource="db/mybatis/mapper/ShoppingCartMapper.xml"/>
+        <mapper resource="db/mybatis/mapper/generated/UserMapper.xml"/>
+        <mapper resource="db/mybatis/mapper/generated/GoodsMapper.xml"/>
+        <mapper resource="db/mybatis/mapper/generated/ShopMapper.xml"/>
+        <mapper resource="db/mybatis/mapper/generated/ShoppingCartMapper.xml"/>
         <mapper resource="db/mybatis/mapper/ShoppingCartQueryMapper.xml"/>
+        <mapper resource="db/mybatis/mapper/GoodsStockMapper.xml"/>
     </mappers>
 </configuration>
