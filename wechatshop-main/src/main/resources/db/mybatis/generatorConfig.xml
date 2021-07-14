@@ -6,6 +6,8 @@
 
 <generatorConfiguration>
     <context id="main" targetRuntime="MyBatis3">
+        <!--所有生成的类实现 Serializable 类-->
+        <plugin type="org.mybatis.generator.plugins.SerializablePlugin"/>
         <plugin type="com.qiukeke.mybatis.plugins.MySQLLimitPlugin"/>
         <!--可使 mapper.java 文件直接被注入的插件-->
         <plugin type="org.mybatis.generator.plugins.MapperAnnotationPlugin"/>
