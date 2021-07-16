@@ -2,16 +2,20 @@ package com.catmmao.wechatshop.service;
 
 import static java.util.stream.Collectors.toList;
 
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 import com.catmmao.wechatshop.UserContext;
 import com.catmmao.wechatshop.api.data.GoodsOnlyContainGoodsIdAndNumber;
 import com.catmmao.wechatshop.api.data.OrderInfo;
+import com.catmmao.wechatshop.api.data.RpcOrderResponse;
+import com.catmmao.wechatshop.api.exception.HttpException;
 import com.catmmao.wechatshop.api.generated.Order;
+import com.catmmao.wechatshop.api.generated.OrderGoodsMapping;
 import com.catmmao.wechatshop.api.rpc.OrderRpcService;
 import com.catmmao.wechatshop.dao.mapper.GoodsStockMapper;
-import com.catmmao.wechatshop.exception.HttpException;
 import com.catmmao.wechatshop.generated.Goods;
 import com.catmmao.wechatshop.generated.ShopMapper;
 import com.catmmao.wechatshop.generated.UserMapper;
@@ -70,8 +74,77 @@ public class OrderServiceIpl implements OrderService {
 
         return generateCompleteOrderInfo(
             listOfGoodsWithNumber,
-            createdOrder,
-            goodsListInDb);
+            createdOrder);
+    }
+
+    /**
+     * 删除订单
+     *
+     * @param orderId 订单ID
+     * @return 刚刚删除的订单
+     */
+    @Transactional
+    @Override
+    public OrderResponse deleteOrder(long orderId) {
+        long userId = UserContext.getCurrentUser().getId();
+        RpcOrderResponse rpcOrderResponse = orderRpcService.deleteOrderByOrderId(orderId, userId);
+
+        Order order = rpcOrderResponse.getOrder();
+
+        List<GoodsOnlyContainGoodsIdAndNumber> listOfGoodsOnlyContainGoodsIdAndNumber =
+            convertListOfOrderGoodsMapping2GoodsOnlyContainGoodsIdAndNumber(rpcOrderResponse.getGoodsList());
+        List<GoodsWithNumber> listOfGoodsWithNumber =
+            generateListOfGoodsWithNumber(listOfGoodsOnlyContainGoodsIdAndNumber);
+
+        return generateCompleteOrderInfo(
+            listOfGoodsWithNumber,
+            order);
+    }
+
+    /**
+     * 将 List OrderGoodsMapping 转换 List GoodsOnlyContainGoodsIdAndNumber
+     *
+     * @param list 待转换的对象
+     * @return 转换后的对象
+     */
+    public List<GoodsOnlyContainGoodsIdAndNumber> convertListOfOrderGoodsMapping2GoodsOnlyContainGoodsIdAndNumber(
+        List<OrderGoodsMapping> list) {
+        List<GoodsOnlyContainGoodsIdAndNumber> result = new LinkedList<>();
+
+        if (!list.isEmpty()) {
+            result = list.stream()
+                .map(this::convertOrderGoodsMapping2GoodsOnlyContainGoodsIdAndNumber)
+                .collect(Collectors.toList());
+        }
+
+        return result;
+    }
+
+    /**
+     * 将 OrderGoodsMapping 转换 GoodsOnlyContainGoodsIdAndNumber
+     *
+     * @param object 待转换的对象
+     * @return 转换后的对象
+     */
+    public GoodsOnlyContainGoodsIdAndNumber convertOrderGoodsMapping2GoodsOnlyContainGoodsIdAndNumber(
+        OrderGoodsMapping object) {
+        GoodsOnlyContainGoodsIdAndNumber result = new GoodsOnlyContainGoodsIdAndNumber();
+        result.setGoodsId(object.getGoodsId());
+        result.setNumber(object.getNumber().intValue());
+        return result;
+    }
+
+    /**
+     * 根据 List GoodsOnlyContainGoodsIdAndNumber 转换成 List GoodsWithNumber
+     *
+     * @param listOfGoodsOnlyContainGoodsIdAndNumber list, 每个元素只包含商品ID和数量
+     * @return list, 每个元素是包含数量的 goods 对象
+     */
+    public List<GoodsWithNumber> generateListOfGoodsWithNumber(
+        List<GoodsOnlyContainGoodsIdAndNumber> listOfGoodsOnlyContainGoodsIdAndNumber) {
+        List<Goods> goodsListInDb = getGoodsListInDb(listOfGoodsOnlyContainGoodsIdAndNumber);
+        Map<Long, Goods> mapOfGoodsIdToGoodsInDb = goodsService.generateMapOfGoodsIdToGoods(goodsListInDb);
+        return combineListOfGoodsWithNumber(listOfGoodsOnlyContainGoodsIdAndNumber, mapOfGoodsIdToGoodsInDb);
     }
 
     /**
@@ -111,16 +184,14 @@ public class OrderServiceIpl implements OrderService {
      *
      * @param listOfGoodsWithNumber list, 包括数量的商品信息
      * @param createdOrder          已在数据库创建好的订单信息
-     * @param goodsListInDb         数据库中存储的商品列表
      * @return 完整的订单信息
      */
     private OrderResponse generateCompleteOrderInfo(
         List<GoodsWithNumber> listOfGoodsWithNumber,
-        Order createdOrder,
-        List<Goods> goodsListInDb) {
+        Order createdOrder) {
 
         OrderResponse result = new OrderResponse(createdOrder);
-        result.setShop(shopMapper.selectByPrimaryKey(goodsListInDb.get(0).getShopId()));
+        result.setShop(shopMapper.selectByPrimaryKey(listOfGoodsWithNumber.get(0).getShopId()));
         result.setGoods(listOfGoodsWithNumber);
 
         return result;

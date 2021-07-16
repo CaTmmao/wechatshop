@@ -8,7 +8,7 @@ import com.catmmao.wechatshop.UserContext;
 import com.catmmao.wechatshop.generated.GoodsMapper;
 import com.catmmao.wechatshop.generated.ShoppingCartMapper;
 import com.catmmao.wechatshop.dao.mapper.ShoppingCartQueryMapper;
-import com.catmmao.wechatshop.exception.HttpException;
+import com.catmmao.wechatshop.api.exception.HttpException;
 import com.catmmao.wechatshop.model.GoodsWithNumber;
 import com.catmmao.wechatshop.generated.Goods;
 import com.catmmao.wechatshop.generated.ShoppingCart;

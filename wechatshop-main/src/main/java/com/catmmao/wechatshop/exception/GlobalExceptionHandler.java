@@ -1,5 +1,6 @@
 package com.catmmao.wechatshop.exception;
 
+import com.catmmao.wechatshop.api.exception.HttpException;
 import com.catmmao.wechatshop.model.response.CommonResponseModel;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ExceptionHandler;

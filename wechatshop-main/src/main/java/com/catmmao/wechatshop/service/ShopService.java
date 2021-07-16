@@ -4,8 +4,8 @@ import java.util.List;
 
 import com.catmmao.wechatshop.UserContext;
 import com.catmmao.wechatshop.generated.ShopMapper;
-import com.catmmao.wechatshop.exception.HttpException;
-import com.catmmao.wechatshop.model.DbDataStatus;
+import com.catmmao.wechatshop.api.exception.HttpException;
+import com.catmmao.wechatshop.api.data.DbDataStatus;
 import com.catmmao.wechatshop.generated.Shop;
 import com.catmmao.wechatshop.generated.ShopExample;
 import com.catmmao.wechatshop.model.response.PaginationResponseModel;

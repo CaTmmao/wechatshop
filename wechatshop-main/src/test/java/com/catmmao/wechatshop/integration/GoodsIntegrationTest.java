@@ -3,8 +3,8 @@ package com.catmmao.wechatshop.integration;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import com.catmmao.wechatshop.WechatshopApplication;
-import com.catmmao.wechatshop.model.generated.Goods;
-import com.catmmao.wechatshop.model.generated.Shop;
+import com.catmmao.wechatshop.generated.Goods;
+import com.catmmao.wechatshop.generated.Shop;
 import com.catmmao.wechatshop.model.response.CommonResponseModel;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -39,14 +39,16 @@ public class GoodsIntegrationTest extends AbstractIntegrationTest {
     void setup() {
         goodsApiUrl = getUrl("/goods");
         shopApiUrl = getUrl("/shop");
+        // 登录
+        afterLoginReturnSessionIdAndUserInfo();
     }
 
+    /**
+     * 创建商品成功
+     */
     @Test
-    public void createGoods() {
-        // 1.登录
-        afterLoginReturnSessionIdAndUserInfo();
-
-        // 2.创建店铺
+    public void createGoodsSucceed() {
+        // 1.创建店铺
         shop.setOwnerUserId(userInfo.getId());
         ResponseEntity<CommonResponseModel<Shop>> response = doHttpRequest(
             shopApiUrl,
@@ -60,7 +62,7 @@ public class GoodsIntegrationTest extends AbstractIntegrationTest {
         assertEquals(shop.getName(), shopData.getName());
         assertEquals(shop.getOwnerUserId(), shopData.getOwnerUserId());
 
-        // 3.在创建好的店铺下创建商品
+        // 2.在创建好的店铺下创建商品
         goods.setShopId(shopData.getId());
         ResponseEntity<CommonResponseModel<Goods>> response2 = doHttpRequest(
             goodsApiUrl,
@@ -77,8 +79,11 @@ public class GoodsIntegrationTest extends AbstractIntegrationTest {
         assertEquals(goods.getShopId(), goodsData.getShopId());
     }
 
+    /**
+     * 删除商品成功
+     */
     @Test
-    public void deleteGoods() {
+    public void deleteGoodsSucceed() {
         //// arrange
         //HttpHeaders headers = new HttpHeaders();
         //headers.add("Cookie", sessionId);

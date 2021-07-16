@@ -1,4 +1,4 @@
-package com.catmmao.wechatshop.exception;
+package com.catmmao.wechatshop.api.exception;
 
 import org.springframework.http.HttpStatus;
 

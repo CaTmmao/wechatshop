@@ -1,9 +1,24 @@
 spring:
+  application:
+    name: main
   datasource:
-    url: jdbc:mysql://localhost:3307/wechatshop
+    url: jdbc:mysql://localhost:3307/main
     password: 123456
     driver-class-name: com.mysql.cj.jdbc.Driver
     username: root
 
 mybatis:
   config-location: classpath:db/mybatis/config.xml
+
+wechatshop:
+  order:
+    version: 1.0.0
+
+dubbo:
+  registry:
+    #    测试时用的是 mock 的生产者，并在引用服务的时候配置了 url，因此会覆盖
+    #    注册中心的地址，但是依旧需要设置一下不然会报错
+    address: N/A
+  scan:
+    #    表示模块在哪个包中
+    base-packages: com.catmmao.wechatshop.mock

@@ -5,6 +5,7 @@ import java.util.List;
 import com.catmmao.wechatshop.api.data.GoodsOnlyContainGoodsIdAndNumber;
 import com.catmmao.wechatshop.api.generated.Order;
 import com.catmmao.wechatshop.api.generated.OrderGoodsMapping;
+import com.catmmao.wechatshop.api.generated.OrderGoodsMappingExample;
 import com.catmmao.wechatshop.api.generated.OrderGoodsMappingMapper;
 import com.catmmao.wechatshop.api.generated.OrderMapper;
 import org.apache.ibatis.session.ExecutorType;
@@ -16,11 +17,14 @@ import org.springframework.stereotype.Repository;
 public class OrderGoodsDao {
     private final SqlSessionFactory sqlSessionFactory;
     private final OrderMapper orderMapper;
+    private final OrderGoodsMappingMapper orderGoodsMappingMapper;
 
     public OrderGoodsDao(SqlSessionFactory sqlSessionFactory,
-                         OrderMapper orderMapper) {
+                         OrderMapper orderMapper,
+                         OrderGoodsMappingMapper orderGoodsMappingMapper) {
         this.sqlSessionFactory = sqlSessionFactory;
         this.orderMapper = orderMapper;
+        this.orderGoodsMappingMapper = orderGoodsMappingMapper;
     }
 
     public void insertMultiOrderGoods(List<GoodsOnlyContainGoodsIdAndNumber> goodsOnlyContainGoodsIdAndNumbers,
@@ -57,5 +61,11 @@ public class OrderGoodsDao {
         long id = orderMapper.insertSelective(order);
         order.setId(id);
         return order;
+    }
+
+    public List<OrderGoodsMapping> getListOfOrderGoodsMappingByOrderId(long orderId) {
+        OrderGoodsMappingExample example = new OrderGoodsMappingExample();
+        example.createCriteria().andOrderIdEqualTo(orderId);
+        return orderGoodsMappingMapper.selectByExample(example);
     }
 }

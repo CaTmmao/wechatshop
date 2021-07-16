@@ -3,7 +3,7 @@ package com.catmmao.wechatshop.integration;
 import java.util.List;
 
 import com.catmmao.wechatshop.model.TelAndCode;
-import com.catmmao.wechatshop.model.generated.User;
+import com.catmmao.wechatshop.generated.User;
 import com.catmmao.wechatshop.model.response.UserLoginResponseModel;
 import org.flywaydb.core.Flyway;
 import org.flywaydb.core.api.configuration.ClassicConfiguration;

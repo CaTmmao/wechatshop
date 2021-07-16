@@ -8,10 +8,10 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 import com.catmmao.wechatshop.WechatshopApplication;
-import com.catmmao.wechatshop.model.generated.Goods;
+import com.catmmao.wechatshop.generated.Goods;
+import com.catmmao.wechatshop.model.GoodsWithNumber;
 import com.catmmao.wechatshop.model.response.CommonResponseModel;
 import com.catmmao.wechatshop.model.response.PaginationResponseModel;
-import com.catmmao.wechatshop.model.GoodsWithNumber;
 import com.catmmao.wechatshop.model.response.ShoppingCartResponseModel;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -32,14 +32,12 @@ class ShoppingCartIntegrationTest extends AbstractIntegrationTest {
     @BeforeEach
     void setup() {
         shoppingCartUrl = getUrl("/shopping_cart");
+        // 登录
+        afterLoginReturnSessionIdAndUserInfo();
     }
 
     @Test
     public void getUserShoppingCartListByUserId() {
-        // 1.登录
-        afterLoginReturnSessionIdAndUserInfo();
-
-        // 2.获取购物车信息
         String url = shoppingCartUrl + "?pageNum=2&pageSize=1";
         ResponseEntity<PaginationResponseModel<ShoppingCartResponseModel>> response = doHttpRequest(
             url,
@@ -73,10 +71,6 @@ class ShoppingCartIntegrationTest extends AbstractIntegrationTest {
 
     @Test
     public void addGoodsToShoppingCart() {
-        // 1.登录
-        afterLoginReturnSessionIdAndUserInfo();
-
-        // 2.添加商品到购物车
         GoodsWithNumber goods = new GoodsWithNumber();
         goods.setId(1L);
         goods.setNumber(100);
@@ -105,10 +99,6 @@ class ShoppingCartIntegrationTest extends AbstractIntegrationTest {
 
     @Test
     public void deleteGoodsInShoppingCart() {
-        // 1.登录
-        afterLoginReturnSessionIdAndUserInfo();
-
-        // 2.从购物车删除指定商品
         ResponseEntity<CommonResponseModel<ShoppingCartResponseModel>> response = doHttpRequest(
             shoppingCartUrl + "/4", HttpMethod.DELETE, null,
             new ParameterizedTypeReference<CommonResponseModel<ShoppingCartResponseModel>>() {

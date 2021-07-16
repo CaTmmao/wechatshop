@@ -1,4 +1,4 @@
-package com.catmmao.wechatshop.model;
+package com.catmmao.wechatshop.api.data;
 
 /**
  * 数据库中数据的状态

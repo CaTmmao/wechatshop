@@ -5,4 +5,5 @@ import com.catmmao.wechatshop.model.response.OrderResponse;
 
 public interface OrderService {
     OrderResponse createOrder(OrderInfo orderInfo);
+    OrderResponse deleteOrder(long orderId);
 }

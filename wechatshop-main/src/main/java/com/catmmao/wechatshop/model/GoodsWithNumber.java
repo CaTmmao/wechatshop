@@ -11,11 +11,13 @@ public class GoodsWithNumber extends Goods {
 
     public GoodsWithNumber(Goods goods) {
         this.setId(goods.getId());
+        this.setShopId(goods.getShopId());
         this.setName(goods.getName());
         this.setDescription(goods.getDescription());
         this.setDetails(goods.getDetails());
         this.setImgUrl(goods.getImgUrl());
         this.setPrice(goods.getPrice());
+        this.setStock(goods.getStock());
     }
 
     public int getNumber() {
