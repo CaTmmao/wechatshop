@@ -13,8 +13,8 @@ import com.catmmao.wechatshop.model.GoodsWithNumber;
 import com.catmmao.wechatshop.generated.Goods;
 import com.catmmao.wechatshop.generated.ShoppingCart;
 import com.catmmao.wechatshop.generated.ShoppingCartExample;
-import com.catmmao.wechatshop.model.response.PaginationResponseModel;
-import com.catmmao.wechatshop.model.response.ShoppingCartResponseModel;
+import com.catmmao.wechatshop.model.response.PaginationResponse;
+import com.catmmao.wechatshop.model.response.ShoppingCartResponse;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.apache.ibatis.session.ExecutorType;
@@ -48,7 +48,7 @@ public class ShoppingCartService {
      * @param goodsId 要删除的商品ID
      * @return 更新后的该店铺物品列表
      */
-    public ShoppingCartResponseModel deleteGoodsInShoppingCart(long goodsId) {
+    public ShoppingCartResponse deleteGoodsInShoppingCart(long goodsId) {
         long userId = UserContext.getCurrentUser().getId();
 
         // 从数据库获取该商品
@@ -73,7 +73,7 @@ public class ShoppingCartService {
      * @param goodsList 需要添加的商品列表
      * @return 已添加进购物车的该店铺的商品列表
      */
-    public ShoppingCartResponseModel addGoodsToShoppingCart(ShoppingCartResponseModel goodsList) {
+    public ShoppingCartResponse addGoodsToShoppingCart(ShoppingCartResponse goodsList) {
         List<GoodsWithNumber> goodsListOnlyHaveGoodsIdAndNumberParam = goodsList.getGoods();
 
         List<Long> goodsIdList = goodsListOnlyHaveGoodsIdAndNumberParam
@@ -137,14 +137,14 @@ public class ShoppingCartService {
      * @param pageSize 每页显示的数量
      * @return 用户名下的所有购物车物品
      */
-    public PaginationResponseModel<ShoppingCartResponseModel> getUserShoppingCart(int pageNum,
-                                                                                  int pageSize) {
+    public PaginationResponse<ShoppingCartResponse> getUserShoppingCart(int pageNum,
+                                                                        int pageSize) {
         long userId = UserContext.getCurrentUser().getId();
         int offset = (pageNum - 1) * pageSize;
         int totalNumber = shoppingCartQueryMapper.countHowManyShopsInUserShoppingCart(userId);
         int totalPage = totalNumber % pageSize == 0 ? totalNumber / pageSize : totalNumber / pageSize + 1;
 
-        List<ShoppingCartResponseModel> data = shoppingCartQueryMapper
+        List<ShoppingCartResponse> data = shoppingCartQueryMapper
             .selectShoppingCartDataListByUserId(userId, offset, pageSize)
             .stream()
             .collect(Collectors.groupingBy(item -> item.getShop().getId()))
@@ -153,7 +153,7 @@ public class ShoppingCartService {
             .map(this::mergeMultiGoodsListFromSameShopToSingleMap)
             .collect(Collectors.toList());
 
-        return new PaginationResponseModel<>(pageSize, pageNum, totalPage, data);
+        return new PaginationResponse<>(pageSize, pageNum, totalPage, data);
     }
 
     /**
@@ -184,16 +184,16 @@ public class ShoppingCartService {
      * @param sameShopList 店铺ID相同的购物车列表
      * @return 合并后的购物车列表
      */
-    public ShoppingCartResponseModel mergeMultiGoodsListFromSameShopToSingleMap(
-        List<ShoppingCartResponseModel> sameShopList) {
+    public ShoppingCartResponse mergeMultiGoodsListFromSameShopToSingleMap(
+        List<ShoppingCartResponse> sameShopList) {
         List<GoodsWithNumber> goodsList = sameShopList
             .stream()
-            .map(ShoppingCartResponseModel::getGoods)
+            .map(ShoppingCartResponse::getGoods)
             // [{"id": 12345...}] 转为 {"id": 12345...}
             .flatMap(List::stream)
             .collect(Collectors.toList());
 
-        ShoppingCartResponseModel result = new ShoppingCartResponseModel();
+        ShoppingCartResponse result = new ShoppingCartResponse();
         result.setShop(sameShopList.get(0).getShop());
         result.setGoods(goodsList);
         return result;
@@ -206,8 +206,8 @@ public class ShoppingCartService {
      * @param shopId 店铺ID
      * @return 购物车内指定店铺的商品列表
      */
-    public ShoppingCartResponseModel getShoppingCartByUserIdAndShopId(long userId, long shopId) {
-        List<ShoppingCartResponseModel> dataList =
+    public ShoppingCartResponse getShoppingCartByUserIdAndShopId(long userId, long shopId) {
+        List<ShoppingCartResponse> dataList =
             shoppingCartQueryMapper.selectShoppingCartDataByUserIdAndShopId(userId, shopId);
         return dataList.isEmpty() ? null : mergeMultiGoodsListFromSameShopToSingleMap(dataList);
     }

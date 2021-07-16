@@ -8,7 +8,7 @@ import com.catmmao.wechatshop.generated.Shop;
 /**
  * 购物车接口的返回值模型
  */
-public class ShoppingCartResponseModel {
+public class ShoppingCartResponse {
     // 店铺信息
     private Shop shop;
     // 商品列表信息

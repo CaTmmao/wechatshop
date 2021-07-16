@@ -5,7 +5,7 @@ import javax.servlet.http.HttpServletResponse;
 import com.catmmao.wechatshop.UserContext;
 import com.catmmao.wechatshop.model.TelAndCode;
 import com.catmmao.wechatshop.generated.User;
-import com.catmmao.wechatshop.model.response.UserLoginResponseModel;
+import com.catmmao.wechatshop.model.response.UserLoginResponse;
 import com.catmmao.wechatshop.service.AuthService;
 import com.catmmao.wechatshop.service.TelVerificationService;
 import org.apache.shiro.SecurityUtils;
@@ -70,14 +70,14 @@ public class AuthController {
      * @return 用户信息
      */
     @GetMapping("/session")
-    public ResponseEntity<UserLoginResponseModel> getLoginStatus() {
-        UserLoginResponseModel responseBody;
+    public ResponseEntity<UserLoginResponse> getLoginStatus() {
+        UserLoginResponse responseBody;
 
         if (UserContext.getCurrentUser() != null) {
             User user = UserContext.getCurrentUser();
-            responseBody = UserLoginResponseModel.loggedIn(user);
+            responseBody = UserLoginResponse.loggedIn(user);
         } else {
-            responseBody = UserLoginResponseModel.notLogin();
+            responseBody = UserLoginResponse.notLogin();
         }
 
         return new ResponseEntity<>(responseBody, HttpStatus.OK);

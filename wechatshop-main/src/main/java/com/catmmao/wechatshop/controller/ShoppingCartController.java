@@ -2,9 +2,9 @@ package com.catmmao.wechatshop.controller;
 
 import java.util.Optional;
 
-import com.catmmao.wechatshop.model.response.CommonResponseModel;
-import com.catmmao.wechatshop.model.response.PaginationResponseModel;
-import com.catmmao.wechatshop.model.response.ShoppingCartResponseModel;
+import com.catmmao.wechatshop.model.response.CommonResponse;
+import com.catmmao.wechatshop.model.response.PaginationResponse;
+import com.catmmao.wechatshop.model.response.ShoppingCartResponse;
 import com.catmmao.wechatshop.service.ShoppingCartService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -32,10 +32,10 @@ public class ShoppingCartController {
      * @return 已添加进购物车的该店铺的商品列表
      */
     @PostMapping
-    public ResponseEntity<CommonResponseModel<ShoppingCartResponseModel>> addGoodsToShoppingCart(
-        @RequestBody ShoppingCartResponseModel goodsList) {
-        ShoppingCartResponseModel data = shoppingCartService.addGoodsToShoppingCart(goodsList);
-        return ResponseEntity.of(Optional.of(CommonResponseModel.of(data)));
+    public ResponseEntity<CommonResponse<ShoppingCartResponse>> addGoodsToShoppingCart(
+        @RequestBody ShoppingCartResponse goodsList) {
+        ShoppingCartResponse data = shoppingCartService.addGoodsToShoppingCart(goodsList);
+        return ResponseEntity.of(Optional.of(CommonResponse.of(data)));
     }
 
     /**
@@ -45,10 +45,10 @@ public class ShoppingCartController {
      * @return 更新后的该店铺物品列表
      */
     @DeleteMapping("/{goodsId}")
-    public ResponseEntity<CommonResponseModel<ShoppingCartResponseModel>> deleteGoodsInShoppingCart(
+    public ResponseEntity<CommonResponse<ShoppingCartResponse>> deleteGoodsInShoppingCart(
         @PathVariable long goodsId) {
-        ShoppingCartResponseModel data = shoppingCartService.deleteGoodsInShoppingCart(goodsId);
-        return ResponseEntity.of(Optional.of(CommonResponseModel.of(data)));
+        ShoppingCartResponse data = shoppingCartService.deleteGoodsInShoppingCart(goodsId);
+        return ResponseEntity.of(Optional.of(CommonResponse.of(data)));
     }
 
     /**
@@ -59,7 +59,7 @@ public class ShoppingCartController {
      * @return 用户名下的所有购物车物品
      */
     @GetMapping
-    public PaginationResponseModel<ShoppingCartResponseModel> getUserShoppingCartListByUserId(
+    public PaginationResponse<ShoppingCartResponse> getUserShoppingCartListByUserId(
         @RequestParam int pageNum,
         @RequestParam int pageSize) {
         return shoppingCartService.getUserShoppingCart(pageNum, pageSize);

@@ -19,7 +19,7 @@ import com.catmmao.wechatshop.api.data.DbDataStatus;
 import com.catmmao.wechatshop.generated.Goods;
 import com.catmmao.wechatshop.generated.Shop;
 import com.catmmao.wechatshop.generated.User;
-import com.catmmao.wechatshop.model.response.PaginationResponseModel;
+import com.catmmao.wechatshop.model.response.PaginationResponse;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -131,7 +131,7 @@ class GoodsServiceTest {
         when(goodsMapper.selectByExample(any())).thenReturn(mockData);
 
         // act
-        PaginationResponseModel<Goods> result = goodsService.getGoodsByShopId(pageNum, pageSize, null);
+        PaginationResponse<Goods> result = goodsService.getGoodsByShopId(pageNum, pageSize, null);
 
         // assert
         assertEquals(4, result.getTotalPage());
@@ -150,7 +150,7 @@ class GoodsServiceTest {
         when(goodsMapper.selectByExample(any())).thenReturn(mockData);
 
         // act
-        PaginationResponseModel<Goods> result = goodsService.getGoodsByShopId(pageNum, pageSize, 123);
+        PaginationResponse<Goods> result = goodsService.getGoodsByShopId(pageNum, pageSize, 123);
 
         // assert
         assertEquals(4, result.getTotalPage());

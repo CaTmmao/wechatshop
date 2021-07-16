@@ -1,7 +1,7 @@
 package com.catmmao.wechatshop.exception;
 
 import com.catmmao.wechatshop.api.exception.HttpException;
-import com.catmmao.wechatshop.model.response.CommonResponseModel;
+import com.catmmao.wechatshop.model.response.CommonResponse;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
@@ -10,8 +10,8 @@ import org.springframework.web.bind.annotation.RestControllerAdvice;
 @RestControllerAdvice
 public class GlobalExceptionHandler {
     @ExceptionHandler(HttpException.class)
-    ResponseEntity<CommonResponseModel<?>> handleHttpException(HttpException e) {
-        CommonResponseModel<?> responseBody = CommonResponseModel.error(e.getMessage());
+    ResponseEntity<CommonResponse<?>> handleHttpException(HttpException e) {
+        CommonResponse<?> responseBody = CommonResponse.error(e.getMessage());
         return ResponseEntity.status(e.getHttpStatus()).body(responseBody);
     }
 }

@@ -3,8 +3,8 @@ package com.catmmao.wechatshop.controller;
 import java.util.Optional;
 
 import com.catmmao.wechatshop.generated.Shop;
-import com.catmmao.wechatshop.model.response.CommonResponseModel;
-import com.catmmao.wechatshop.model.response.PaginationResponseModel;
+import com.catmmao.wechatshop.model.response.CommonResponse;
+import com.catmmao.wechatshop.model.response.PaginationResponse;
 import com.catmmao.wechatshop.service.ShopService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -41,10 +41,10 @@ public class ShopController {
      * @return 创建好的店铺信息
      */
     @PostMapping
-    public ResponseEntity<CommonResponseModel<Shop>> createShop(@RequestBody Shop shop) {
+    public ResponseEntity<CommonResponse<Shop>> createShop(@RequestBody Shop shop) {
         sanitize(shop);
         Shop result = shopService.createShop(shop);
-        CommonResponseModel<Shop> responseBody = CommonResponseModel.of(result);
+        CommonResponse<Shop> responseBody = CommonResponse.of(result);
         return new ResponseEntity<>(responseBody, HttpStatus.CREATED);
     }
 
@@ -56,11 +56,11 @@ public class ShopController {
      * @return 修改后的店铺信息
      */
     @PatchMapping("/{id}")
-    public ResponseEntity<CommonResponseModel<Shop>> updateGoods(@PathVariable("id") Long shopId,
-                                                                 @RequestBody Shop shop) {
+    public ResponseEntity<CommonResponse<Shop>> updateGoods(@PathVariable("id") Long shopId,
+                                                            @RequestBody Shop shop) {
         sanitize(shop);
         shopService.updateShop(shop);
-        CommonResponseModel<Shop> responseBody = CommonResponseModel.of(shop);
+        CommonResponse<Shop> responseBody = CommonResponse.of(shop);
         return ResponseEntity.of(Optional.of(responseBody));
     }
 
@@ -71,9 +71,9 @@ public class ShopController {
      * @return 删除成功的店铺信息
      */
     @DeleteMapping("/{id}")
-    public ResponseEntity<CommonResponseModel<Shop>> deleteShop(@PathVariable("id") Long shopId) {
+    public ResponseEntity<CommonResponse<Shop>> deleteShop(@PathVariable("id") Long shopId) {
         Shop result = shopService.deleteShop(shopId);
-        CommonResponseModel<Shop> responseBody = CommonResponseModel.of(result);
+        CommonResponse<Shop> responseBody = CommonResponse.of(result);
         return new ResponseEntity<>(responseBody, HttpStatus.NO_CONTENT);
     }
 
@@ -85,9 +85,9 @@ public class ShopController {
      * @return 获取到的店铺列表
      */
     @GetMapping
-    public ResponseEntity<PaginationResponseModel<Shop>> getMyShopList(@RequestParam int pageNum,
-                                                                       @RequestParam int pageSize) {
-        PaginationResponseModel<Shop> responseBody;
+    public ResponseEntity<PaginationResponse<Shop>> getMyShopList(@RequestParam int pageNum,
+                                                                  @RequestParam int pageSize) {
+        PaginationResponse<Shop> responseBody;
         responseBody = shopService.getMyShopListByUserId(pageNum, pageSize);
         return ResponseEntity.of(Optional.of(responseBody));
     }
@@ -99,9 +99,9 @@ public class ShopController {
      * @return 获取到的店铺信息
      */
     @GetMapping("/{id}")
-    public ResponseEntity<CommonResponseModel<Shop>> getShopByShopId(@PathVariable("id") Long shopId) {
+    public ResponseEntity<CommonResponse<Shop>> getShopByShopId(@PathVariable("id") Long shopId) {
         Shop result = shopService.getShopByShopId(shopId);
-        CommonResponseModel<Shop> responseBody = CommonResponseModel.of(result);
+        CommonResponse<Shop> responseBody = CommonResponse.of(result);
         return ResponseEntity.of(Optional.of(responseBody));
     }
 }

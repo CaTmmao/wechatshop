@@ -2,7 +2,7 @@ package com.catmmao.wechatshop.model.response;
 
 import java.util.List;
 
-public class PaginationResponseModel<T> {
+public class PaginationResponse<T> {
     // 每页显示的数量
     private Integer pageSize;
     // 当前页数，从 1 开始
@@ -13,7 +13,7 @@ public class PaginationResponseModel<T> {
     // 列表
     private List<T> data;
 
-    public PaginationResponseModel(Integer pageSize, Integer pageNum, Integer totalPage, List<T> data) {
+    public PaginationResponse(Integer pageSize, Integer pageNum, Integer totalPage, List<T> data) {
         this.pageSize = pageSize;
         this.pageNum = pageNum;
         this.totalPage = totalPage;

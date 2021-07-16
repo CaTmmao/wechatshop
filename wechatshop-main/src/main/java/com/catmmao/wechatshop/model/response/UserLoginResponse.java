@@ -2,21 +2,21 @@ package com.catmmao.wechatshop.model.response;
 
 import com.catmmao.wechatshop.generated.User;
 
-public class UserLoginResponseModel {
+public class UserLoginResponse {
     private Boolean isLogin;
     private User user;
 
-    private UserLoginResponseModel(boolean isLogin, User user) {
+    private UserLoginResponse(boolean isLogin, User user) {
         this.isLogin = isLogin;
         this.user = user;
     }
 
-    public static UserLoginResponseModel notLogin() {
-        return new UserLoginResponseModel(false, null);
+    public static UserLoginResponse notLogin() {
+        return new UserLoginResponse(false, null);
     }
 
-    public static UserLoginResponseModel loggedIn(User user) {
-        return new UserLoginResponseModel(true, user);
+    public static UserLoginResponse loggedIn(User user) {
+        return new UserLoginResponse(true, user);
     }
 
     public boolean isLogin() {

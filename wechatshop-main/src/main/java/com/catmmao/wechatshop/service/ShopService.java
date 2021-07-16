@@ -8,7 +8,7 @@ import com.catmmao.wechatshop.api.exception.HttpException;
 import com.catmmao.wechatshop.api.data.DbDataStatus;
 import com.catmmao.wechatshop.generated.Shop;
 import com.catmmao.wechatshop.generated.ShopExample;
-import com.catmmao.wechatshop.model.response.PaginationResponseModel;
+import com.catmmao.wechatshop.model.response.PaginationResponse;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -86,7 +86,7 @@ public class ShopService {
      * @param pageSize 每页显示的数量
      * @return 获取到的店铺列表
      */
-    public PaginationResponseModel<Shop> getMyShopListByUserId(int pageNum, int pageSize) {
+    public PaginationResponse<Shop> getMyShopListByUserId(int pageNum, int pageSize) {
         Long userId = UserContext.getCurrentUser().getId();
         // 店铺总数量
         int totalNumber = countShop(userId);
@@ -100,7 +100,7 @@ public class ShopService {
         shopExample.createCriteria().andOwnerUserIdEqualTo(userId);
         List<Shop> shopList = shopMapper.selectByExample(shopExample);
 
-        return new PaginationResponseModel<>(pageSize, pageNum, totalPage, shopList);
+        return new PaginationResponse<>(pageSize, pageNum, totalPage, shopList);
     }
 
     /**

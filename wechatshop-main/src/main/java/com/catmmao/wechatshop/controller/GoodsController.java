@@ -4,8 +4,8 @@ import java.util.Optional;
 import javax.websocket.server.PathParam;
 
 import com.catmmao.wechatshop.generated.Goods;
-import com.catmmao.wechatshop.model.response.CommonResponseModel;
-import com.catmmao.wechatshop.model.response.PaginationResponseModel;
+import com.catmmao.wechatshop.model.response.CommonResponse;
+import com.catmmao.wechatshop.model.response.PaginationResponse;
 import com.catmmao.wechatshop.service.GoodsService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -35,10 +35,10 @@ public class GoodsController {
      * @return 创建好的商品信息
      */
     @PostMapping
-    public ResponseEntity<CommonResponseModel<Goods>> createGoods(@RequestBody Goods goods) {
+    public ResponseEntity<CommonResponse<Goods>> createGoods(@RequestBody Goods goods) {
         sanitize(goods);
         goods = goodsService.createGoods(goods);
-        CommonResponseModel<Goods> responseBody = CommonResponseModel.of(goods);
+        CommonResponse<Goods> responseBody = CommonResponse.of(goods);
         return new ResponseEntity<>(responseBody, HttpStatus.CREATED);
     }
 
@@ -49,9 +49,9 @@ public class GoodsController {
      * @return 被删除的商品信息
      */
     @DeleteMapping("/{id}")
-    public ResponseEntity<CommonResponseModel<Goods>> deleteGoods(@PathVariable("id") Long goodsId) {
+    public ResponseEntity<CommonResponse<Goods>> deleteGoods(@PathVariable("id") Long goodsId) {
         Goods goods = goodsService.deleteGoodsByGoodsId(goodsId);
-        CommonResponseModel<Goods> responseBody = CommonResponseModel.of(goods);
+        CommonResponse<Goods> responseBody = CommonResponse.of(goods);
         return new ResponseEntity<>(responseBody, HttpStatus.NO_CONTENT);
     }
 
@@ -64,11 +64,11 @@ public class GoodsController {
      * @return 查询到的商品列表信息
      */
     @GetMapping
-    public ResponseEntity<PaginationResponseModel<Goods>> getGoodsListByShopId(@RequestParam Integer pageNum,
-                                                                               @RequestParam Integer pageSize,
-                                                                               @RequestParam(required = false)
+    public ResponseEntity<PaginationResponse<Goods>> getGoodsListByShopId(@RequestParam Integer pageNum,
+                                                                          @RequestParam Integer pageSize,
+                                                                          @RequestParam(required = false)
                                                                                    Integer shopId) {
-        PaginationResponseModel<Goods> responseBody = goodsService.getGoodsByShopId(pageNum, pageSize, shopId);
+        PaginationResponse<Goods> responseBody = goodsService.getGoodsByShopId(pageNum, pageSize, shopId);
         return ResponseEntity.of(Optional.of(responseBody));
     }
 
@@ -80,12 +80,12 @@ public class GoodsController {
      * @return 更新后的商品信息
      */
     @PatchMapping
-    public ResponseEntity<CommonResponseModel<Goods>> updateGoods(@PathParam("id") Long goodsId,
-                                                                  @RequestBody Goods goods) {
+    public ResponseEntity<CommonResponse<Goods>> updateGoods(@PathParam("id") Long goodsId,
+                                                             @RequestBody Goods goods) {
         sanitize(goods);
         goods.setId(goodsId);
         Goods result = goodsService.updateGoods(goods);
-        CommonResponseModel<Goods> responseBody = CommonResponseModel.of(result);
+        CommonResponse<Goods> responseBody = CommonResponse.of(result);
         return ResponseEntity.of(Optional.of(responseBody));
     }
 
@@ -96,9 +96,9 @@ public class GoodsController {
      * @return 商品信息
      */
     @GetMapping("/{id}")
-    public ResponseEntity<CommonResponseModel<Goods>> getGoodsByGoodsId(@PathVariable("id") long goodsId) {
+    public ResponseEntity<CommonResponse<Goods>> getGoodsByGoodsId(@PathVariable("id") long goodsId) {
         Goods result = goodsService.getGoodsByGoodsId(goodsId);
-        CommonResponseModel<Goods> responseBody = CommonResponseModel.of(result);
+        CommonResponse<Goods> responseBody = CommonResponse.of(result);
         return ResponseEntity.of(Optional.of(responseBody));
     }
 

@@ -1,20 +1,20 @@
 package com.catmmao.wechatshop.model.response;
 
-public class CommonResponseModel<T> {
+public class CommonResponse<T> {
     private String message;
     private T data;
 
-    public CommonResponseModel(String message, T data) {
+    public CommonResponse(String message, T data) {
         this.message = message;
         this.data = data;
     }
 
-    public static <T> CommonResponseModel<T> of(T data) {
-        return new CommonResponseModel<>(null, data);
+    public static <T> CommonResponse<T> of(T data) {
+        return new CommonResponse<>(null, data);
     }
 
-    public static <T> CommonResponseModel<T> error(String message) {
-        return new CommonResponseModel<>(message, null);
+    public static <T> CommonResponse<T> error(String message) {
+        return new CommonResponse<>(message, null);
     }
 
     public String getMessage() {

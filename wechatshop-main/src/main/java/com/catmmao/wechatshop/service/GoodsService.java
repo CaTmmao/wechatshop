@@ -13,7 +13,7 @@ import com.catmmao.wechatshop.api.data.DbDataStatus;
 import com.catmmao.wechatshop.generated.Goods;
 import com.catmmao.wechatshop.generated.GoodsExample;
 import com.catmmao.wechatshop.generated.Shop;
-import com.catmmao.wechatshop.model.response.PaginationResponseModel;
+import com.catmmao.wechatshop.model.response.PaginationResponse;
 import org.springframework.stereotype.Service;
 import com.catmmao.wechatshop.model.GoodsWithNumber;
 
@@ -76,7 +76,7 @@ public class GoodsService {
      * @param shopId   店铺ID，若传递，则只显示该店铺中的商品
      * @return 所有商品
      */
-    public PaginationResponseModel<Goods> getGoodsByShopId(
+    public PaginationResponse<Goods> getGoodsByShopId(
         Integer pageNum, Integer pageSize, Integer shopId) {
         // 商品总数量
         int totalNumber = countGoods(shopId);
@@ -89,7 +89,7 @@ public class GoodsService {
         page.setOffset((pageNum - 1) * pageSize);
         List<Goods> goodsList = goodsMapper.selectByExample(page);
 
-        return new PaginationResponseModel<>(pageSize, pageNum, totalPage, goodsList);
+        return new PaginationResponse<>(pageSize, pageNum, totalPage, goodsList);
     }
 
     /**
