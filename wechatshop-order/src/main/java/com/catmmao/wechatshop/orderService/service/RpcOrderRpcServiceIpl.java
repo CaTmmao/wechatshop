@@ -103,6 +103,12 @@ public class RpcOrderRpcServiceIpl implements OrderRpcService {
         return new PaginationResponse<>(pageSize, pageNum, totalPage, data);
     }
 
+    /**
+     * 查看当前用户XX状态的订单共有多少个
+     *
+     * @param status 订单状态
+     * @return 订单数量
+     */
     private long getCountOfUserHasHowManyOrder(String status) {
         OrderExample orderExample = new OrderExample();
         setOrderExampleCriteriaOfStatus(orderExample, status);
