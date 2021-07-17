@@ -1,21 +1,23 @@
 package com.catmmao.wechatshop.service;
 
+import static java.util.stream.Collectors.toList;
+
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
-import com.catmmao.wechatshop.api.data.GoodsOnlyContainGoodsIdAndNumber;
 import com.catmmao.wechatshop.UserContext;
-import com.catmmao.wechatshop.generated.GoodsMapper;
-import com.catmmao.wechatshop.generated.ShopMapper;
-import com.catmmao.wechatshop.api.exception.HttpException;
 import com.catmmao.wechatshop.api.data.DbDataStatus;
+import com.catmmao.wechatshop.api.data.GoodsIdAndNumber;
+import com.catmmao.wechatshop.api.data.PaginationResponse;
+import com.catmmao.wechatshop.api.exception.HttpException;
 import com.catmmao.wechatshop.generated.Goods;
 import com.catmmao.wechatshop.generated.GoodsExample;
+import com.catmmao.wechatshop.generated.GoodsMapper;
 import com.catmmao.wechatshop.generated.Shop;
-import com.catmmao.wechatshop.model.response.PaginationResponse;
-import org.springframework.stereotype.Service;
+import com.catmmao.wechatshop.generated.ShopMapper;
 import com.catmmao.wechatshop.model.GoodsWithNumber;
+import org.springframework.stereotype.Service;
 
 @Service
 public class GoodsService {
@@ -175,13 +177,13 @@ public class GoodsService {
      * 将 Goods 和数量合并到一起
      *
      * @param mapOfGoodsIdToGoodsInDb          map, 商品ID到商品信息的映射
-     * @param goodsOnlyContainGoodsIdAndNumber 只包括商品数量和商品ID
+     * @param goodsIdAndNumber 只包括商品数量和商品ID
      * @return 合并后的商品信息
      */
     public GoodsWithNumber combineGoodsAndNumber(Map<Long, Goods> mapOfGoodsIdToGoodsInDb,
-                                                 GoodsOnlyContainGoodsIdAndNumber goodsOnlyContainGoodsIdAndNumber) {
-        long goodsId = goodsOnlyContainGoodsIdAndNumber.getGoodsId();
-        int number = goodsOnlyContainGoodsIdAndNumber.getNumber();
+                                                 GoodsIdAndNumber goodsIdAndNumber) {
+        long goodsId = goodsIdAndNumber.getId();
+        int number = goodsIdAndNumber.getNumber();
         GoodsWithNumber result = null;
 
         Goods goodsInDb = mapOfGoodsIdToGoodsInDb.get(goodsId);
@@ -203,5 +205,21 @@ public class GoodsService {
         return goodsList
             .stream()
             .collect(Collectors.toMap(Goods::getId, goods -> goods));
+    }
+
+    /**
+     * 获取商品列表
+     *
+     * @param listOfGoodsIdAndNumber list, 每个元素包括商品ID和数量
+     * @return list, 商品列表
+     */
+    public List<Goods> getGoodsListInDb(
+        List<GoodsIdAndNumber> listOfGoodsIdAndNumber) {
+        List<Long> goodsIdList = listOfGoodsIdAndNumber
+            .stream()
+            .map(GoodsIdAndNumber::getId)
+            .collect(toList());
+
+        return getGoodsListByGoodsIdList(goodsIdList);
     }
 }

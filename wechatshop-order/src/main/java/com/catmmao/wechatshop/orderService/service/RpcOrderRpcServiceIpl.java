@@ -1,13 +1,20 @@
 package com.catmmao.wechatshop.orderService.service;
 
+import static java.util.stream.Collectors.groupingBy;
+import static java.util.stream.Collectors.toList;
+
 import java.util.List;
+import java.util.Map;
 
 import com.catmmao.wechatshop.api.data.DbDataStatus;
-import com.catmmao.wechatshop.api.data.GoodsOnlyContainGoodsIdAndNumber;
+import com.catmmao.wechatshop.api.data.GoodsIdAndNumber;
+import com.catmmao.wechatshop.api.data.PaginationResponse;
 import com.catmmao.wechatshop.api.data.RpcOrderResponse;
 import com.catmmao.wechatshop.api.exception.HttpException;
 import com.catmmao.wechatshop.api.generated.Order;
+import com.catmmao.wechatshop.api.generated.OrderExample;
 import com.catmmao.wechatshop.api.generated.OrderGoodsMapping;
+import com.catmmao.wechatshop.api.generated.OrderGoodsMappingMapper;
 import com.catmmao.wechatshop.api.generated.OrderMapper;
 import com.catmmao.wechatshop.api.rpc.OrderRpcService;
 import com.catmmao.wechatshop.orderService.dao.OrderGoodsDao;
@@ -18,18 +25,21 @@ import org.apache.dubbo.config.annotation.DubboService;
 public class RpcOrderRpcServiceIpl implements OrderRpcService {
     private final OrderGoodsDao orderGoodsDao;
     private final OrderMapper orderMapper;
+    private final OrderGoodsMappingMapper orderGoodsMappingMapper;
 
     public RpcOrderRpcServiceIpl(OrderGoodsDao orderGoodsDao,
-                                 OrderMapper orderMapper) {
+                                 OrderMapper orderMapper,
+                                 OrderGoodsMappingMapper orderGoodsMappingMapper) {
         this.orderGoodsDao = orderGoodsDao;
         this.orderMapper = orderMapper;
+        this.orderGoodsMappingMapper = orderGoodsMappingMapper;
     }
 
     @Override
-    public Order createOrder(List<GoodsOnlyContainGoodsIdAndNumber> goodsOnlyContainGoodsIdAndNumberList,
+    public Order createOrder(List<GoodsIdAndNumber> listOfGoodsIdAndNumber,
                              Order order) {
         order = orderGoodsDao.insertOrder(order);
-        orderGoodsDao.insertMultiOrderGoods(goodsOnlyContainGoodsIdAndNumberList, order.getId());
+        orderGoodsDao.insertMultiOrderGoods(listOfGoodsIdAndNumber, order.getId());
 
         return order;
     }
@@ -58,6 +68,60 @@ public class RpcOrderRpcServiceIpl implements OrderRpcService {
         result.setOrder(order);
         result.setGoodsList(list);
         return result;
+    }
+
+    /**
+     * 获取当前用户名下的所有订单
+     *
+     * @param pageNum  当前页数，从1开始
+     * @param pageSize 每页显示的数量
+     * @param status   订单状态：pending 待付款 paid 已付款 delivered 物流中 received 已收货
+     * @return 订单列表
+     */
+    @Override
+    public PaginationResponse<RpcOrderResponse> getAllOrders(long userId, int pageNum, int pageSize, String status) {
+        List<Order> orderList = orderGoodsDao.getListOfOrderWithPagination(pageNum, pageSize, status, userId);
+        List<Long> listOfOrderId = orderList.stream().map(Order::getId).collect(toList());
+
+        List<OrderGoodsMapping> listOfOrderGoodsMapping =
+            orderGoodsDao.getListOfOrderGoodsMappingByListOfOrderId(listOfOrderId);
+
+        Map<Long, List<OrderGoodsMapping>> mapOfOrderIdToOrderGoodsMappingList = listOfOrderGoodsMapping.stream()
+            .collect(groupingBy(OrderGoodsMapping::getOrderId, toList()));
+
+        List<RpcOrderResponse> data = orderList.stream()
+            .map(order -> {
+                RpcOrderResponse item = new RpcOrderResponse();
+                item.setOrder(order);
+                item.setGoodsList(mapOfOrderIdToOrderGoodsMappingList.get(order.getId()));
+                return item;
+            })
+            .collect(toList());
+
+        int count = (int) getCountOfUserHasHowManyOrder(status);
+        int totalPage = count % pageSize == 0 ? count / pageSize : count / pageSize + 1;
+        return new PaginationResponse<>(pageSize, pageNum, totalPage, data);
+    }
+
+    private long getCountOfUserHasHowManyOrder(String status) {
+        OrderExample orderExample = new OrderExample();
+        setOrderExampleCriteriaOfStatus(orderExample, status);
+        return orderMapper.countByExample(orderExample);
+    }
+
+    /**
+     * 给 orderExample 设置 status 条件
+     *
+     * @param orderExample orderExample
+     * @param status       status 字段
+     * @return 设置了 status 条件的 orderExample, 可继续设置其他条件
+     */
+    public OrderExample.Criteria setOrderExampleCriteriaOfStatus(OrderExample orderExample, String status) {
+        if (status == null) {
+            return orderExample.createCriteria().andStatusNotEqualTo(DbDataStatus.DELETE.getName());
+        } else {
+            return orderExample.createCriteria().andStatusEqualTo(status);
+        }
     }
 
     /**

@@ -5,7 +5,7 @@ import javax.websocket.server.PathParam;
 
 import com.catmmao.wechatshop.generated.Goods;
 import com.catmmao.wechatshop.model.response.CommonResponse;
-import com.catmmao.wechatshop.model.response.PaginationResponse;
+import com.catmmao.wechatshop.api.data.PaginationResponse;
 import com.catmmao.wechatshop.service.GoodsService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;

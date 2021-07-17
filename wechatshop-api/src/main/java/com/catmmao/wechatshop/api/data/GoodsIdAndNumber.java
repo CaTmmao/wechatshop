@@ -2,16 +2,16 @@ package com.catmmao.wechatshop.api.data;
 
 import java.io.Serializable;
 
-public class GoodsOnlyContainGoodsIdAndNumber implements Serializable {
-    private long goodsId;
+public class GoodsIdAndNumber implements Serializable {
+    private long id;
     private int number;
 
-    public long getGoodsId() {
-        return goodsId;
+    public long getId() {
+        return id;
     }
 
-    public void setGoodsId(long goodsId) {
-        this.goodsId = goodsId;
+    public void setId(long id) {
+        this.id = id;
     }
 
     public int getNumber() {

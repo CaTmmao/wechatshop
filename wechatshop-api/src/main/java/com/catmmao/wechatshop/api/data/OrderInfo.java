@@ -20,14 +20,14 @@ import java.util.List;
 </pre>
 */
 public class OrderInfo implements Serializable {
-    List<GoodsOnlyContainGoodsIdAndNumber> goodsOnlyContainGoodsIdAndNumbers;
+    List<GoodsIdAndNumber> listOfGoodsIdAndNumber;
 
-    public List<GoodsOnlyContainGoodsIdAndNumber> getGoodsOnlyContainGoodsIdAndNumbers() {
-        return goodsOnlyContainGoodsIdAndNumbers;
+    public List<GoodsIdAndNumber> getGoodsOnlyContainGoodsIdAndNumbers() {
+        return listOfGoodsIdAndNumber;
     }
 
     public void setGoodsOnlyContainGoodsIdAndNumbers(
-        List<GoodsOnlyContainGoodsIdAndNumber> goodsOnlyContainGoodsIdAndNumbers) {
-        this.goodsOnlyContainGoodsIdAndNumbers = goodsOnlyContainGoodsIdAndNumbers;
+        List<GoodsIdAndNumber> listOfGoodsIdAndNumber) {
+        this.listOfGoodsIdAndNumber = listOfGoodsIdAndNumber;
     }
 }

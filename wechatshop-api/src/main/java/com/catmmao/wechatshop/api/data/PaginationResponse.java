@@ -1,4 +1,4 @@
-package com.catmmao.wechatshop.model.response;
+package com.catmmao.wechatshop.api.data;
 
 import java.util.List;
 
@@ -18,6 +18,13 @@ public class PaginationResponse<T> {
         this.pageNum = pageNum;
         this.totalPage = totalPage;
         this.data = data;
+    }
+
+    public PaginationResponse(PaginationResponse<?> object) {
+        this.pageSize = object.pageSize;
+        this.pageNum = object.pageNum;
+        this.totalPage = object.totalPage;
+        this.data = null;
     }
 
     public Integer getPageSize() {

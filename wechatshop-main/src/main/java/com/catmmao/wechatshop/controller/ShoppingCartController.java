@@ -3,7 +3,7 @@ package com.catmmao.wechatshop.controller;
 import java.util.Optional;
 
 import com.catmmao.wechatshop.model.response.CommonResponse;
-import com.catmmao.wechatshop.model.response.PaginationResponse;
+import com.catmmao.wechatshop.api.data.PaginationResponse;
 import com.catmmao.wechatshop.model.response.ShoppingCartResponse;
 import com.catmmao.wechatshop.service.ShoppingCartService;
 import org.springframework.http.ResponseEntity;

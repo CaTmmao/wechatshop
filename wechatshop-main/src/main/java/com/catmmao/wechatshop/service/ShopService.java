@@ -8,7 +8,7 @@ import com.catmmao.wechatshop.api.exception.HttpException;
 import com.catmmao.wechatshop.api.data.DbDataStatus;
 import com.catmmao.wechatshop.generated.Shop;
 import com.catmmao.wechatshop.generated.ShopExample;
-import com.catmmao.wechatshop.model.response.PaginationResponse;
+import com.catmmao.wechatshop.api.data.PaginationResponse;
 import org.springframework.stereotype.Service;
 
 @Service

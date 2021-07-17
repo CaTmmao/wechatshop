@@ -3,12 +3,12 @@ package com.catmmao.wechatshop.model.response;
 import java.util.List;
 
 import com.catmmao.wechatshop.api.generated.Order;
-import com.catmmao.wechatshop.model.GoodsWithNumber;
 import com.catmmao.wechatshop.generated.Shop;
+import com.catmmao.wechatshop.model.GoodsWithNumber;
 
 public class OrderResponse extends Order {
     private Shop shop;
-    private List<GoodsWithNumber> goods;
+    private List<GoodsWithNumber> goodsWithNumberList;
 
     public OrderResponse() {
     }
@@ -33,11 +33,11 @@ public class OrderResponse extends Order {
         this.shop = shop;
     }
 
-    public List<GoodsWithNumber> getGoods() {
-        return goods;
+    public List<GoodsWithNumber> getGoodsWithNumberList() {
+        return goodsWithNumberList;
     }
 
-    public void setGoods(List<GoodsWithNumber> goods) {
-        this.goods = goods;
+    public void setGoodsWithNumberList(List<GoodsWithNumber> goods) {
+        this.goodsWithNumberList = goods;
     }
 }

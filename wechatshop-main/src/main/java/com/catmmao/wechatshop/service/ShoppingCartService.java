@@ -13,7 +13,7 @@ import com.catmmao.wechatshop.model.GoodsWithNumber;
 import com.catmmao.wechatshop.generated.Goods;
 import com.catmmao.wechatshop.generated.ShoppingCart;
 import com.catmmao.wechatshop.generated.ShoppingCartExample;
-import com.catmmao.wechatshop.model.response.PaginationResponse;
+import com.catmmao.wechatshop.api.data.PaginationResponse;
 import com.catmmao.wechatshop.model.response.ShoppingCartResponse;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;

@@ -2,14 +2,15 @@ package com.catmmao.wechatshop.service;
 
 import static java.util.stream.Collectors.toList;
 
-import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
 import com.catmmao.wechatshop.UserContext;
-import com.catmmao.wechatshop.api.data.GoodsOnlyContainGoodsIdAndNumber;
+import com.catmmao.wechatshop.api.converter.CommonConverter;
+import com.catmmao.wechatshop.api.data.GoodsIdAndNumber;
 import com.catmmao.wechatshop.api.data.OrderInfo;
+import com.catmmao.wechatshop.api.data.PaginationResponse;
 import com.catmmao.wechatshop.api.data.RpcOrderResponse;
 import com.catmmao.wechatshop.api.exception.HttpException;
 import com.catmmao.wechatshop.api.generated.Order;
@@ -34,17 +35,20 @@ public class OrderServiceIpl implements OrderService {
     private final GoodsService goodsService;
     private final GoodsStockMapper goodsStockMapper;
     private final Logger logger = LoggerFactory.getLogger(OrderServiceIpl.class);
+    private final CommonConverter commonConverter;
 
     @DubboReference(version = "${wechatshop.order.version}")
     private OrderRpcService orderRpcService;
 
     public OrderServiceIpl(UserMapper userMapper,
                            ShopMapper shopMapper, GoodsService goodsService,
-                           GoodsStockMapper goodsStockMapper) {
+                           GoodsStockMapper goodsStockMapper,
+                           CommonConverter commonConverter) {
         this.userMapper = userMapper;
         this.shopMapper = shopMapper;
         this.goodsService = goodsService;
         this.goodsStockMapper = goodsStockMapper;
+        this.commonConverter = commonConverter;
     }
 
     /**
@@ -55,25 +59,25 @@ public class OrderServiceIpl implements OrderService {
      */
     @Transactional
     public OrderResponse createOrder(OrderInfo orderInfo) {
-        List<GoodsOnlyContainGoodsIdAndNumber> listOfGoodsOnlyContainGoodsIdAndNumber =
+        List<GoodsIdAndNumber> listOfGoodsIdAndNumber =
             orderInfo.getGoodsOnlyContainGoodsIdAndNumbers();
 
-        if (!deductStock(listOfGoodsOnlyContainGoodsIdAndNumber)) {
+        if (!deductStock(listOfGoodsIdAndNumber)) {
             throw HttpException.gone("扣减库存失败");
         }
 
-        List<Goods> goodsListInDb = getGoodsListInDb(listOfGoodsOnlyContainGoodsIdAndNumber);
+        List<Goods> goodsListInDb = goodsService.getGoodsListInDb(listOfGoodsIdAndNumber);
         Map<Long, Goods> mapOfGoodsIdToGoodsInDb = goodsService.generateMapOfGoodsIdToGoods(goodsListInDb);
 
         Order createdOrder = createOrderViaRpc(
-            listOfGoodsOnlyContainGoodsIdAndNumber,
+            listOfGoodsIdAndNumber,
             mapOfGoodsIdToGoodsInDb);
 
-        List<GoodsWithNumber> listOfGoodsWithNumber =
-            combineListOfGoodsWithNumber(listOfGoodsOnlyContainGoodsIdAndNumber, mapOfGoodsIdToGoodsInDb);
+        List<OrderGoodsMapping> listOfOrderGoodsMapping = commonConverter
+            .listOfGoodsIdAndNumber2OrderGoodsMapping(listOfGoodsIdAndNumber);
 
-        return generateCompleteOrderInfo(
-            listOfGoodsWithNumber,
+        return generateOrderResponse(
+            listOfOrderGoodsMapping,
             createdOrder);
     }
 
@@ -89,110 +93,48 @@ public class OrderServiceIpl implements OrderService {
         long userId = UserContext.getCurrentUser().getId();
         RpcOrderResponse rpcOrderResponse = orderRpcService.deleteOrderByOrderId(orderId, userId);
 
-        Order order = rpcOrderResponse.getOrder();
-
-        List<GoodsOnlyContainGoodsIdAndNumber> listOfGoodsOnlyContainGoodsIdAndNumber =
-            convertListOfOrderGoodsMapping2GoodsOnlyContainGoodsIdAndNumber(rpcOrderResponse.getGoodsList());
-        List<GoodsWithNumber> listOfGoodsWithNumber =
-            generateListOfGoodsWithNumber(listOfGoodsOnlyContainGoodsIdAndNumber);
-
-        return generateCompleteOrderInfo(
-            listOfGoodsWithNumber,
-            order);
+        return generateOrderResponse(
+            rpcOrderResponse.getGoodsList(),
+            rpcOrderResponse.getOrder());
     }
 
     /**
-     * 将 List OrderGoodsMapping 转换 List GoodsOnlyContainGoodsIdAndNumber
+     * 获取当前用户名下的所有订单
      *
-     * @param list 待转换的对象
-     * @return 转换后的对象
+     * @param pageNum  当前页数，从1开始
+     * @param pageSize 每页显示的数量
+     * @param status   订单状态：pending 待付款 paid 已付款 delivered 物流中 received 已收货
+     * @return 订单列表
      */
-    public List<GoodsOnlyContainGoodsIdAndNumber> convertListOfOrderGoodsMapping2GoodsOnlyContainGoodsIdAndNumber(
-        List<OrderGoodsMapping> list) {
-        List<GoodsOnlyContainGoodsIdAndNumber> result = new LinkedList<>();
-
-        if (!list.isEmpty()) {
-            result = list.stream()
-                .map(this::convertOrderGoodsMapping2GoodsOnlyContainGoodsIdAndNumber)
-                .collect(Collectors.toList());
-        }
-
+    @Override
+    public PaginationResponse<OrderResponse> getAllOrders(int pageNum, int pageSize, String status) {
+        long userId = UserContext.getCurrentUser().getId();
+        PaginationResponse<RpcOrderResponse> rpcOrderResponse = orderRpcService.getAllOrders(userId, pageNum, pageSize, status);
+        List<RpcOrderResponse> listOfRpcOrderResponse = rpcOrderResponse.getData();
+        List<OrderResponse> data = generateAllOrderInfoList(listOfRpcOrderResponse);
+        PaginationResponse<OrderResponse> result = new PaginationResponse<>(rpcOrderResponse);
+        result.setData(data);
         return result;
-    }
-
-    /**
-     * 将 OrderGoodsMapping 转换 GoodsOnlyContainGoodsIdAndNumber
-     *
-     * @param object 待转换的对象
-     * @return 转换后的对象
-     */
-    public GoodsOnlyContainGoodsIdAndNumber convertOrderGoodsMapping2GoodsOnlyContainGoodsIdAndNumber(
-        OrderGoodsMapping object) {
-        GoodsOnlyContainGoodsIdAndNumber result = new GoodsOnlyContainGoodsIdAndNumber();
-        result.setGoodsId(object.getGoodsId());
-        result.setNumber(object.getNumber().intValue());
-        return result;
-    }
-
-    /**
-     * 根据 List GoodsOnlyContainGoodsIdAndNumber 转换成 List GoodsWithNumber
-     *
-     * @param listOfGoodsOnlyContainGoodsIdAndNumber list, 每个元素只包含商品ID和数量
-     * @return list, 每个元素是包含数量的 goods 对象
-     */
-    public List<GoodsWithNumber> generateListOfGoodsWithNumber(
-        List<GoodsOnlyContainGoodsIdAndNumber> listOfGoodsOnlyContainGoodsIdAndNumber) {
-        List<Goods> goodsListInDb = getGoodsListInDb(listOfGoodsOnlyContainGoodsIdAndNumber);
-        Map<Long, Goods> mapOfGoodsIdToGoodsInDb = goodsService.generateMapOfGoodsIdToGoods(goodsListInDb);
-        return combineListOfGoodsWithNumber(listOfGoodsOnlyContainGoodsIdAndNumber, mapOfGoodsIdToGoodsInDb);
-    }
-
-    /**
-     * 将两个数组合并成包含数量的商品列表
-     *
-     * @param listOfGoodsOnlyContainGoodsIdAndNumber list, 每个元素包含 goodsId 和 number
-     * @param mapOfGoodsIdToGoodsInDb                map, goodsId 到 goods 的映射
-     * @return 包含数量的商品列表
-     */
-    private List<GoodsWithNumber> combineListOfGoodsWithNumber(
-        List<GoodsOnlyContainGoodsIdAndNumber> listOfGoodsOnlyContainGoodsIdAndNumber,
-        Map<Long, Goods> mapOfGoodsIdToGoodsInDb) {
-        return listOfGoodsOnlyContainGoodsIdAndNumber
-            .stream()
-            .map(item -> goodsService.combineGoodsAndNumber(mapOfGoodsIdToGoodsInDb, item))
-            .collect(toList());
-    }
-
-    /**
-     * 获取商品列表
-     *
-     * @param listOfGoodsOnlyContainGoodsIdAndNumber list, 每个元素包括商品ID和数量
-     * @return 商品列表
-     */
-    private List<Goods> getGoodsListInDb(
-        List<GoodsOnlyContainGoodsIdAndNumber> listOfGoodsOnlyContainGoodsIdAndNumber) {
-        List<Long> goodsIdList = listOfGoodsOnlyContainGoodsIdAndNumber
-            .stream()
-            .map(GoodsOnlyContainGoodsIdAndNumber::getGoodsId)
-            .collect(toList());
-
-        return goodsService.getGoodsListByGoodsIdList(goodsIdList);
     }
 
     /**
      * 生成完整的订单信息
      *
-     * @param listOfGoodsWithNumber list, 包括数量的商品信息
-     * @param createdOrder          已在数据库创建好的订单信息
+     * @param listOfOrderGoodsMapping list, orderGoodsMapping
+     * @param createdOrder            已在数据库创建好的订单信息
      * @return 完整的订单信息
      */
-    private OrderResponse generateCompleteOrderInfo(
-        List<GoodsWithNumber> listOfGoodsWithNumber,
+    private OrderResponse generateOrderResponse(
+        List<OrderGoodsMapping> listOfOrderGoodsMapping,
         Order createdOrder) {
+        List<GoodsIdAndNumber> listOfGoodsIdAndNumber =
+            commonConverter.listOfOrderGoodsMapping2GoodsIdAndNumber(listOfOrderGoodsMapping);
+        List<GoodsWithNumber> listOfGoodsWithNumber =
+            generateListOfGoodsWithNumber(listOfGoodsIdAndNumber);
 
         OrderResponse result = new OrderResponse(createdOrder);
+        result.setGoodsWithNumberList(listOfGoodsWithNumber);
         result.setShop(shopMapper.selectByPrimaryKey(listOfGoodsWithNumber.get(0).getShopId()));
-        result.setGoods(listOfGoodsWithNumber);
 
         return result;
     }
@@ -200,31 +142,31 @@ public class OrderServiceIpl implements OrderService {
     /**
      * 通过 RPC 创建订单
      *
-     * @param listOfGoodsOnlyContainGoodsIdAndNumber list, 每个元素包含商品ID和数量
-     * @param mapOfGoodsIdToGoodsInDb                map, goodsId 到 goods 的映射
+     * @param listOfGoodsIdAndNumber  list, 每个元素包含商品ID和数量
+     * @param mapOfGoodsIdToGoodsInDb map, goodsId 到 goods 的映射
      * @return 订单创建成功后的订单信息
      */
-    private Order createOrderViaRpc(List<GoodsOnlyContainGoodsIdAndNumber> listOfGoodsOnlyContainGoodsIdAndNumber,
+    private Order createOrderViaRpc(List<GoodsIdAndNumber> listOfGoodsIdAndNumber,
                                     Map<Long, Goods> mapOfGoodsIdToGoodsInDb) {
         long userId = UserContext.getCurrentUser().getId();
 
         Order order = new Order();
         order.setAddress(userMapper.selectByPrimaryKey(userId).getAddress());
         order.setUserId(userId);
-        order.setTotalPrice(calculateTotalPrice(listOfGoodsOnlyContainGoodsIdAndNumber, mapOfGoodsIdToGoodsInDb));
-        return orderRpcService.createOrder(listOfGoodsOnlyContainGoodsIdAndNumber, order);
+        order.setTotalPrice(calculateTotalPrice(listOfGoodsIdAndNumber, mapOfGoodsIdToGoodsInDb));
+        return orderRpcService.createOrder(listOfGoodsIdAndNumber, order);
     }
 
     /**
      * 扣减商品库存
      *
-     * @param goodsOnlyContainGoodsIdAndNumberList list,每个元素包含商品ID和数量
+     * @param listOfGoodsIdAndNumber list,每个元素包含商品ID和数量
      * @return true 扣减成功；false 扣减失败
      */
-    private boolean deductStock(List<GoodsOnlyContainGoodsIdAndNumber> goodsOnlyContainGoodsIdAndNumberList) {
-        for (GoodsOnlyContainGoodsIdAndNumber item : goodsOnlyContainGoodsIdAndNumberList) {
+    private boolean deductStock(List<GoodsIdAndNumber> listOfGoodsIdAndNumber) {
+        for (GoodsIdAndNumber item : listOfGoodsIdAndNumber) {
             if (goodsStockMapper.deductStock(item) <= 0) {
-                logger.error("商品库存扣减失败，商品id: " + item.getGoodsId() + "; 数量: " + item.getNumber());
+                logger.error("商品库存扣减失败，商品id: " + item.getId() + "; 数量: " + item.getNumber());
                 return false;
             }
         }
@@ -239,11 +181,11 @@ public class OrderServiceIpl implements OrderService {
      * @param goodsIdToGoodsMap map，商品ID到商品信息的映射
      * @return 总金额
      */
-    private long calculateTotalPrice(List<GoodsOnlyContainGoodsIdAndNumber> goodsList,
+    private long calculateTotalPrice(List<GoodsIdAndNumber> goodsList,
                                      Map<Long, Goods> goodsIdToGoodsMap) {
         return goodsList.stream()
             .mapToLong(item -> {
-                long goodsId = item.getGoodsId();
+                long goodsId = item.getId();
                 long number = item.getNumber();
 
                 if (number <= 0) {
@@ -259,5 +201,48 @@ public class OrderServiceIpl implements OrderService {
                 return goods.getPrice() * number;
             })
             .sum();
+    }
+
+    /**
+     * 根据 List GoodsIdAndNumber 转换成 List GoodsWithNumber
+     *
+     * @param listOfGoodsIdAndNumber list, 每个元素只包含商品ID和数量
+     * @return list, 每个元素是包含数量的 goods 对象
+     */
+    public List<GoodsWithNumber> generateListOfGoodsWithNumber(
+        List<GoodsIdAndNumber> listOfGoodsIdAndNumber) {
+        List<Goods> goodsListInDb = goodsService.getGoodsListInDb(listOfGoodsIdAndNumber);
+        Map<Long, Goods> mapOfGoodsIdToGoodsInDb = goodsService.generateMapOfGoodsIdToGoods(goodsListInDb);
+        return combineListOfGoodsWithNumber(listOfGoodsIdAndNumber, mapOfGoodsIdToGoodsInDb);
+    }
+
+    /**
+     * 生成订单信息列表
+     *
+     * @param listOfRpcOrderResponse list, RpcOrderResponse
+     * @return 订单信息列表
+     */
+    private List<OrderResponse> generateAllOrderInfoList(
+        List<RpcOrderResponse> listOfRpcOrderResponse) {
+        return listOfRpcOrderResponse
+            .stream()
+            .map(item -> generateOrderResponse(item.getGoodsList(), item.getOrder()))
+            .collect(Collectors.toList());
+    }
+
+    /**
+     * 将两个数组合并成包含数量的商品列表
+     *
+     * @param listOfGoodsIdAndNumber  list, 每个元素包含 goodsId 和 number
+     * @param mapOfGoodsIdToGoodsInDb map, goodsId 到 goods 的映射
+     * @return 包含数量的商品列表
+     */
+    private List<GoodsWithNumber> combineListOfGoodsWithNumber(
+        List<GoodsIdAndNumber> listOfGoodsIdAndNumber,
+        Map<Long, Goods> mapOfGoodsIdToGoodsInDb) {
+        return listOfGoodsIdAndNumber
+            .stream()
+            .map(item -> goodsService.combineGoodsAndNumber(mapOfGoodsIdToGoodsInDb, item))
+            .collect(toList());
     }
 }
