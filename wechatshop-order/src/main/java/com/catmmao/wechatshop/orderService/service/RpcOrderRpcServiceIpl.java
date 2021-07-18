@@ -63,11 +63,7 @@ public class RpcOrderRpcServiceIpl implements OrderRpcService {
         order.setStatus(DbDataStatus.DELETE.getName());
         orderMapper.updateByPrimaryKeySelective(order);
 
-        List<OrderGoodsMapping> list = getListOfOrderGoodsMappingByOrderId(orderId);
-        RpcOrderResponse result = new RpcOrderResponse();
-        result.setOrder(order);
-        result.setGoodsList(list);
-        return result;
+        return generateRpcOrderResponseByOrderId(order.getId());
     }
 
     /**
@@ -146,12 +142,40 @@ public class RpcOrderRpcServiceIpl implements OrderRpcService {
      * @param orderId 订单ID
      * @return 订单
      */
-    private Order getOrderByOrderId(long orderId) {
+    public Order getOrderByOrderId(long orderId) {
         Order order = orderMapper.selectByPrimaryKey(orderId);
         if (order == null) {
             throw HttpException.resourceNotFound("找不到该订单");
         }
 
         return order;
+    }
+
+    /**
+     * 更新订单
+     *
+     * @param order 待更新的订单信息
+     * @return 更新后完整的订单信息
+     */
+    @Override
+    public RpcOrderResponse updateOrder(Order order) {
+        orderMapper.updateByPrimaryKeySelective(order);
+        return generateRpcOrderResponseByOrderId(order.getId());
+    }
+
+    /**
+     * 根据订单ID生成 RpcOrderResponse 对象
+     *
+     * @param orderId 订单ID
+     * @return 生成的 RpcOrderResponse 对象
+     */
+    private RpcOrderResponse generateRpcOrderResponseByOrderId(long orderId) {
+        Order order = orderMapper.selectByPrimaryKey(orderId);
+        List<OrderGoodsMapping> list = getListOfOrderGoodsMappingByOrderId(orderId);
+
+        RpcOrderResponse result = new RpcOrderResponse();
+        result.setOrder(order);
+        result.setGoodsList(list);
+        return result;
     }
 }

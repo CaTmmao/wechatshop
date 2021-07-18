@@ -13,4 +13,8 @@ public interface OrderRpcService {
     RpcOrderResponse deleteOrderByOrderId(long orderId, long userId);
 
     PaginationResponse<RpcOrderResponse> getAllOrders(long userId, int pageNum, int pageSize, String status);
+
+    Order getOrderByOrderId(long orderId);
+
+    RpcOrderResponse updateOrder(Order newOrder);
 }

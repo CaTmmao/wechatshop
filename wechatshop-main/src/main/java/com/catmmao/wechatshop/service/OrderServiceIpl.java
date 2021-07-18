@@ -18,6 +18,7 @@ import com.catmmao.wechatshop.api.generated.OrderGoodsMapping;
 import com.catmmao.wechatshop.api.rpc.OrderRpcService;
 import com.catmmao.wechatshop.dao.mapper.GoodsStockMapper;
 import com.catmmao.wechatshop.generated.Goods;
+import com.catmmao.wechatshop.generated.Shop;
 import com.catmmao.wechatshop.generated.ShopMapper;
 import com.catmmao.wechatshop.generated.UserMapper;
 import com.catmmao.wechatshop.model.GoodsWithNumber;
@@ -109,12 +110,68 @@ public class OrderServiceIpl implements OrderService {
     @Override
     public PaginationResponse<OrderResponse> getAllOrders(int pageNum, int pageSize, String status) {
         long userId = UserContext.getCurrentUser().getId();
-        PaginationResponse<RpcOrderResponse> rpcOrderResponse = orderRpcService.getAllOrders(userId, pageNum, pageSize, status);
+        PaginationResponse<RpcOrderResponse> rpcOrderResponse =
+            orderRpcService.getAllOrders(userId, pageNum, pageSize, status);
         List<RpcOrderResponse> listOfRpcOrderResponse = rpcOrderResponse.getData();
         List<OrderResponse> data = generateAllOrderInfoList(listOfRpcOrderResponse);
         PaginationResponse<OrderResponse> result = new PaginationResponse<>(rpcOrderResponse);
         result.setData(data);
         return result;
+    }
+
+    /**
+     * 更新订单物流信息
+     *
+     * @param order 订单信息
+     * @return 更新后的订单信息
+     */
+    @Override
+    public OrderResponse updateExpressInfo(Order order) {
+        long userId = UserContext.getCurrentUser().getId();
+        long orderId = order.getId();
+
+        Order orderInDb = orderRpcService.getOrderByOrderId(orderId);
+        Shop shop = shopMapper.selectByPrimaryKey(orderInDb.getShopId());
+
+        if (shop == null) {
+            throw HttpException.resourceNotFound("店铺不存在");
+        }
+
+        if (shop.getOwnerUserId() != userId) {
+            throw HttpException.forbidden("无权访问，只能由店铺所有者操作");
+        }
+
+        Order newOrder = new Order();
+        newOrder.setId(orderId);
+        newOrder.setStatus("delivered");
+        newOrder.setExpressId(order.getExpressId());
+        newOrder.setExpressCompany(order.getExpressCompany());
+        RpcOrderResponse rpcOrderResponse = orderRpcService.updateOrder(newOrder);
+
+        return generateOrderResponse(rpcOrderResponse.getGoodsList(), rpcOrderResponse.getOrder());
+    }
+
+    /**
+     * 更新订单状态
+     *
+     * @param order 订单信息
+     * @return 更新后的订单信息
+     */
+    @Override
+    public OrderResponse updateOrderStatus(Order order) {
+        long userId = UserContext.getCurrentUser().getId();
+        long orderId = order.getId();
+        Order orderInDb = orderRpcService.getOrderByOrderId(orderId);
+        if (orderInDb.getUserId() != userId) {
+            throw HttpException.forbidden("无权访问，只有订单所有者才能更新订单");
+        }
+
+        Order newOrder = new Order();
+        order.setId(orderId);
+        order.setStatus(order.getStatus());
+        RpcOrderResponse rpcOrderResponse = orderRpcService.updateOrder(newOrder);
+
+        return generateOrderResponse(rpcOrderResponse.getGoodsList(), rpcOrderResponse.getOrder());
     }
 
     /**

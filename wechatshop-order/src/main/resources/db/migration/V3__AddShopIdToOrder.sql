@@ -1,0 +1,10 @@
+-- 给 order 表添加 shop_id 字段
+ALTER TABLE `order`
+    ADD COLUMN (SHOP_ID BIGINT);
+
+DELETE
+FROM `order`
+WHERE USER_ID = 1;
+
+INSERT INTO `order` (ID, USER_ID, SHOP_ID, TOTAL_PRICE, ADDRESS, EXPRESS_COMPANY, EXPRESS_ID, STATUS)
+VALUES (1, 1, 1, 1400, '火星', '顺丰', '运单1234567', 'delivered');
